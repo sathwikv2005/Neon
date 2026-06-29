@@ -3,6 +3,14 @@
 #include "common.h"
 #include "engine.h"
 
+#ifdef _WIN32
+#include <io.h>
+#define isatty _isatty
+#define fileno _fileno
+#else
+#include <unistd.h>
+#endif
+
 static void printBanner() {
     printf(ANSI_NEON_BLUE);
 
@@ -24,8 +32,22 @@ static void printBanner() {
     printf(ANSI_RESET);
 }
 
+static void repl() {
+    if (isatty(fileno(stdin))) {
+        printBanner();
+    }
+    char line[1024];
+    for (;;) {
+        printf("> ");
+        if (!fgets(line, sizeof(line), stdin)) {
+            printf("\n");
+            break;
+        }
+        // run command.
+    }
+}
+
 int main(int argc, const char* argv[]) {
-    printBanner();
     repl();
     return 0;
 }
