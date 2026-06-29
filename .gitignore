@@ -1,0 +1,18 @@
+#vscode
+.vscode
+
+# builds
+bin/*
+*.exe
+
+#profiler output
+gmon.out
+report.txt
+
+#cmake
+build/
+dist/
+compile_commands.json
+
+#installer
+release/
