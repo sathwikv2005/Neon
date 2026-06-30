@@ -3,6 +3,8 @@
 
 #include "common.h"
 
+#define GC_HEAP_GROW_FACTOR 2
+
 #define ALLOCATE(type, count) (type*)reallocate(NULL, 0, sizeof(type) * (count))
 
 #define FREE(type, pointer) reallocate(pointer, sizeof(type), 0)
