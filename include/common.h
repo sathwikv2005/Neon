@@ -5,6 +5,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define NAN_BOXING
+#define UINT8_COUNT (UINT8_MAX + 1)
+
 #define NEON_VERSION_STRING "0.1.0"
 
 #define ANSI_RED "\x1b[31m"
