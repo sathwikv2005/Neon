@@ -4,6 +4,8 @@
 #include "common.h"
 
 typedef enum {
+    TOKEN_COMMANDS_START,
+
     // Connection
     TOKEN_PING,
     TOKEN_ECHO,
@@ -24,6 +26,8 @@ typedef enum {
     TOKEN_FLUSH,
     TOKEN_DBSIZE,
 
+    TOKEN_COMMANDS_END,
+
     // Constants
     TOKEN_NUMBER,
     TOKEN_STRING,
@@ -42,5 +46,6 @@ typedef struct {
 } Token;
 
 void initScanner(const char* source);
+Token scanToken();
 
 #endif
