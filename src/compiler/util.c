@@ -30,3 +30,12 @@ void error(const char* message) {
 }
 
 void errorAtCurrent(const char* message) { errorAt(&parser.current, message); }
+
+uint8_t makeConstant(Value value) {
+    int constant = addConstant(chunk, value);
+    if (constant > UINT8_MAX) {
+        error("Too many constants in one chunk.");
+        return 0;
+    }
+    return (uint8_t)constant;
+}

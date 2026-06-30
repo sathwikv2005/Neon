@@ -1,8 +1,7 @@
 #ifndef neon_compiler_common_h
 #define neon_compiler_common_h
 
-#include "parser.h"
-#include "scanner.h"
+#include "compiler.h"
 
 // util
 void errorAt(Token* token, const char* message);
