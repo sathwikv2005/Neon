@@ -47,7 +47,7 @@ typedef enum {
 } InterpretResult;
 typedef struct {
     Value stack[STACK_MAX];
-
+    Chunk* chunk;
     // gc
     size_t bytesAllocated;
     size_t nextGC;
@@ -62,6 +62,8 @@ typedef struct {
         stackTop always points one past the last occupied stack slot.
     */
     Value* stackTop;
+
+    uint8_t* ip;
 
     int exitCode;
     jmp_buf engineJmp;
@@ -78,5 +80,7 @@ void push(Value value);
 Value pop();
 bool isFalsey(Value value);
 void runtimeError(const char* format, ...);
+
+InterpretResult interpret(const char* source);
 
 #endif
