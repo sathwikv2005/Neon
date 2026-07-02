@@ -4,6 +4,29 @@
 #include "line.h"
 #include "value.h"
 
+typedef enum {
+    // connection
+    OP_PING,
+    OP_ECHO,
+    OP_QUIT,
+
+    // CRUD operations
+    OP_SET,
+    OP_GET,
+    OP_DEL,
+    OP_KEYS,
+
+    // key management
+    OP_RENAME,
+    OP_EXISTS,
+    OP_TYPE,
+
+    // database management
+    OP_FLUSH,
+    OP_DBSIZE
+
+} OpCode;
+
 typedef struct {
     int count;
     int capacity;
