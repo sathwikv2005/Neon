@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <stdio.h>
 
 #include "vm_common.h"
@@ -31,9 +32,7 @@ Value pop() {
     return *--vm.stackTop;
 }
 
-bool isFalsey(Value value) {
-    return IS_NULL(value) || (IS_BOOL(value) && !AS_BOOL(value));
-}
+bool isFalsey(Value value) { return IS_NULL(value); }
 
 void concatenate() {
     ObjString* b = AS_STRING(valueToString(peek(0)));

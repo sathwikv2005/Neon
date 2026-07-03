@@ -24,7 +24,7 @@ void freevm() {
 }
 
 static InterpretResult run() {
-    Chunk* chunk = &vm.chunk;
+    const Chunk* chunk = vm.chunk;
     register uint8_t* ip = vm.ip;
 
 /*

@@ -85,12 +85,8 @@ bool valuesEqual(Value a, Value b) {
 #endif
 }
 
-ObjString* valueType(Value value) {
+ObjString* valueTypeName(Value value) {
 #ifdef NAN_BOXING
-    if (IS_BOOL(value)) {
-        return copyString("bool", 4);
-    }
-
     if (IS_NULL(value)) {
         return copyString("null", 4);
     }
@@ -100,7 +96,7 @@ ObjString* valueType(Value value) {
     }
 
     if (IS_OBJ(value)) {
-        return objType(value);
+        return objTypeName(value);
     }
 #else
     switch (value.type) {

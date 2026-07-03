@@ -47,7 +47,8 @@ typedef enum {
 } InterpretResult;
 typedef struct {
     Value stack[STACK_MAX];
-    Chunk* chunk;
+    const Chunk* chunk;
+
     // gc
     size_t bytesAllocated;
     size_t nextGC;
