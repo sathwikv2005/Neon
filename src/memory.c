@@ -1,10 +1,10 @@
 #include "../include/memory.h"
 
 #include "compiler.h"
-#include "engine.h"
+#include "vm.h"
 
 void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
-    engine.bytesAllocated += newSize - oldSize;
+    vm.bytesAllocated += newSize - oldSize;
 
 #ifdef NEON_DEBUG
     if (newSize > oldSize) {
@@ -25,7 +25,7 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
    references can later be traversed and marked.
 */
 void markObject(Obj* object) {
-    if (object == NULL || object->isMarked == engine.currentGCMark) return;
+    if (object == NULL || object->isMarked == vm.currentGCMark) return;
 #ifdef HELIUM_DEBUG
     if (GET_DEBUG_LOG_GC()) {
         printf("%p mark ", (void*)object);
@@ -33,16 +33,15 @@ void markObject(Obj* object) {
         printf("\n");
     }
 #endif
-    object->isMarked = engine.currentGCMark;
+    object->isMarked = vm.currentGCMark;
 
-    if (engine.grayCapacity < engine.grayCount + 1) {
-        engine.grayCapacity = GROW_CAPACITY(engine.grayCapacity);
-        engine.grayStack =
-            realloc(engine.grayStack, sizeof(Obj*) * engine.grayCapacity);
-        if (engine.grayStack == NULL) exit(1);
+    if (vm.grayCapacity < vm.grayCount + 1) {
+        vm.grayCapacity = GROW_CAPACITY(vm.grayCapacity);
+        vm.grayStack = realloc(vm.grayStack, sizeof(Obj*) * vm.grayCapacity);
+        if (vm.grayStack == NULL) exit(1);
     }
 
-    engine.grayStack[engine.grayCount++] = object;
+    vm.grayStack[vm.grayCount++] = object;
 }
 
 void markValue(Value value) {
@@ -88,14 +87,14 @@ static void freeObject(Obj* object) {
 }
 
 void freeObjects() {
-    Obj* object = engine.objects;
+    Obj* object = vm.objects;
     while (object != NULL) {
         Obj* next = object->next;
         freeObject(object);
         object = next;
     }
 
-    free(engine.grayStack);
+    free(vm.grayStack);
 }
 
 /*
@@ -104,7 +103,7 @@ void freeObjects() {
     Any object reachable from these roots is considered live.
 */
 static void markRoots() {
-    for (Value* slot = engine.stack; slot < engine.stackTop; slot++) {
+    for (Value* slot = vm.stack; slot < vm.stackTop; slot++) {
         markValue(*slot);
     }
     markCompilerRoots();
@@ -114,8 +113,8 @@ static void markRoots() {
     Traverses the gray stack until all reachable objects are visited
 */
 static void traceReferences() {
-    while (engine.grayCount > 0) {
-        Obj* object = engine.grayStack[--engine.grayCount];
+    while (vm.grayCount > 0) {
+        Obj* object = vm.grayStack[--vm.grayCount];
         blackenObject(object);
     }
 }
@@ -125,9 +124,9 @@ static void traceReferences() {
 */
 static void sweep() {
     Obj* previous = NULL;
-    Obj* object = engine.objects;
+    Obj* object = vm.objects;
     while (object != NULL) {
-        if (object->isMarked == engine.currentGCMark) {
+        if (object->isMarked == vm.currentGCMark) {
             previous = object;
             object = object->next;
             continue;
@@ -137,7 +136,7 @@ static void sweep() {
         if (previous != NULL) {
             previous->next = object;
         } else {
-            engine.objects = object;
+            vm.objects = object;
         }
 
         freeObject(unreached);
@@ -163,27 +162,27 @@ void collectGarbage() {
     size_t before = 0;
     if (GET_DEBUG_LOG_GC()) {
         printf("------ gc begin\n");
-        before = engine.bytesAllocated;
+        before = vm.bytesAllocated;
     }
 #endif
 
     markRoots();
     traceReferences();
-    // tableRemoveWhite(&engine.strings);
+    // tableRemoveWhite(&vm.strings);
     sweep();
 
     // flip the mark bit, so all surviving objects appear as unmarked for next
     // cycle.
-    engine.currentGCMark = !engine.currentGCMark;
+    vm.currentGCMark = !vm.currentGCMark;
 
-    engine.nextGC = engine.bytesAllocated * GC_HEAP_GROW_FACTOR;
+    vm.nextGC = vm.bytesAllocated * GC_HEAP_GROW_FACTOR;
 
 #ifdef HELIUM_DEBUG
     if (GET_DEBUG_LOG_GC()) {
         printf("------ gc end\n");
         printf("   collected %zu bytes (from %zu to %zu) next at %zu\n",
-               before - engine.bytesAllocated, before, engine.bytesAllocated,
-               engine.nextGC);
+               before - vm.bytesAllocated, before, vm.bytesAllocated,
+               vm.nextGC);
     }
 #endif
 }

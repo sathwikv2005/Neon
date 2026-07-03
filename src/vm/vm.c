@@ -1,31 +1,31 @@
 #include "compiler.h"
-#include "engine_common.h"
+#include "vm_common.h"
 
-Engine engine;
+VM vm;
 
-void initEngine() {
+void initvm() {
     resetStack();
-    engine.objects = NULL;
-    engine.grayCount = 0;
-    engine.grayCapacity = 0;
-    engine.grayStack = NULL;
-    engine.debugFlags = 0;
-    engine.atLineStart = true;
-    engine.bytesAllocated = 0;
-    engine.nextGC = 1024 * 1024;
-    engine.currentGCMark = true;
-    engine.ip = 0;
-    // initTable(&engine.strings);
+    vm.objects = NULL;
+    vm.grayCount = 0;
+    vm.grayCapacity = 0;
+    vm.grayStack = NULL;
+    vm.debugFlags = 0;
+    vm.atLineStart = true;
+    vm.bytesAllocated = 0;
+    vm.nextGC = 1024 * 1024;
+    vm.currentGCMark = true;
+    vm.ip = 0;
+    // initTable(&vm.strings);
 }
 
-void freeEngine() {
+void freevm() {
     freeObjects();
-    // freeTable(&engine.strings);
+    // freeTable(&vm.strings);
 }
 
 static InterpretResult run() {
-    Chunk* chunk = &engine.chunk;
-    register uint8_t* ip = engine.ip;
+    Chunk* chunk = &vm.chunk;
+    register uint8_t* ip = vm.ip;
 
 /*
     The ip is cached locally so, that the c compiler can store it in a register
@@ -34,7 +34,7 @@ static InterpretResult run() {
 */
 #define RUNTIME_ERROR(...)         \
     do {                           \
-        engine.ip = ip;            \
+        vm.ip = ip;                \
         runtimeError(__VA_ARGS__); \
     } while (false)
 
@@ -63,14 +63,14 @@ static InterpretResult run() {
 }
 
 InterpretResult interpret(const char* source) {
-    switch (setjmp(engine.engineJmp)) {
+    switch (setjmp(vm.vmJmp)) {
         case JUMP_RUNTIME_ERROR:
             return INTERPRET_RUNTIME_ERROR;
         case JUMP_EXIT:
             return INTERPRET_EXIT;
     }
     const Chunk* chunk = compile(source);
-    engine.chunk = chunk;
-    engine.ip = chunk->code;
+    vm.chunk = chunk;
+    vm.ip = chunk->code;
     return run();
 }

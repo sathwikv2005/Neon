@@ -1,5 +1,5 @@
-#ifndef neon_engine_h
-#define neon_engine_h
+#ifndef neon_vm_h
+#define neon_vm_h
 
 #include <setjmp.h>
 
@@ -66,15 +66,15 @@ typedef struct {
     uint8_t* ip;
 
     int exitCode;
-    jmp_buf engineJmp;
+    jmp_buf vmJmp;
 
     bool atLineStart;
 
     // debug flags
     uint8_t debugFlags;
-} Engine;
+} VM;
 
-extern Engine engine;
+extern VM vm;
 
 void push(Value value);
 Value pop();

@@ -2,10 +2,10 @@
 
 #include <stdlib.h>
 
-#include "../include/engine.h"
 #include "../include/line.h"
 #include "../include/memory.h"
 #include "../include/value.h"
+#include "../include/vm.h"
 
 void initChunk(Chunk* chunk) {
     chunk->count = 0;

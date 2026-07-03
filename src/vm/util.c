@@ -1,9 +1,9 @@
 #include <stdio.h>
 
-#include "engine_common.h"
+#include "vm_common.h"
 
 void runtimeError(const char* format, ...) {
-    if (!engine.atLineStart) putchar('\n');
+    if (!vm.atLineStart) putchar('\n');
     fprintf(stderr, ANSI_RED "Runtime Error: " ANSI_RESET);
     va_list args;
     va_start(args, format);
@@ -12,23 +12,23 @@ void runtimeError(const char* format, ...) {
     fputs("\n", stderr);
 
     resetStack();
-    longjmp(engine.engineJmp, JUMP_RUNTIME_ERROR);
+    longjmp(vm.vmJmp, JUMP_RUNTIME_ERROR);
 }
 
-Value peek(int distance) { return engine.stackTop[-1 - distance]; }
+Value peek(int distance) { return vm.stackTop[-1 - distance]; }
 
 void push(Value value) {
-    if (engine.stackTop == engine.stack + STACK_MAX) {
+    if (vm.stackTop == vm.stack + STACK_MAX) {
         runtimeError("Stack overflow error.");
     }
-    *engine.stackTop++ = value;
+    *vm.stackTop++ = value;
 }
 
 Value pop() {
-    if (engine.stackTop == engine.stack) {
+    if (vm.stackTop == vm.stack) {
         runtimeError("Stack underflow error.");
     }
-    return *--engine.stackTop;
+    return *--vm.stackTop;
 }
 
 bool isFalsey(Value value) {
@@ -51,4 +51,4 @@ void concatenate() {
     push(OBJ_VAL(result));
 }
 
-void resetStack() { engine.stackTop = engine.stack; }
+void resetStack() { vm.stackTop = vm.stack; }

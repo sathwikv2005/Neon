@@ -1,9 +1,9 @@
-#ifndef neon_engine_common_h
-#define neon_engine_common_h
+#ifndef neon_vm_common_h
+#define neon_vm_common_h
 
 #include "../../include/memory.h"
-#include "engine.h"
 #include "object.h"
+#include "vm.h"
 
 // util
 Value peek(int distance);

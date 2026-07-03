@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include "common.h"
-#include "engine.h"
+#include "vm.h"
 
 #ifdef _WIN32
 #include <io.h>
