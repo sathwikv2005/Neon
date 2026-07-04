@@ -7,6 +7,9 @@
 void errorAt(Token* token, const char* message);
 void error(const char* message);
 void errorAtCurrent(const char* message);
+uint8_t makeConstant(Value value);
+void emitByte(uint8_t byte);
+void emitBytes(uint8_t byte1, uint8_t byte2);
 
 // parser
 extern Parser parser;
@@ -15,5 +18,9 @@ void advance();
 void consume(TokenType type, const char* message);
 bool check(TokenType type);
 bool match(TokenType type);
+
+// compiler
+void parseKey(const char* message);
+void parseValue(const char* message);
 
 #endif

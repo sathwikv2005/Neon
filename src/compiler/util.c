@@ -39,3 +39,12 @@ uint8_t makeConstant(Value value) {
     }
     return (uint8_t)constant;
 }
+
+void emitByte(uint8_t byte) {
+    if (parser.hadError) return;
+    writeChunk(currentChunk(), byte, parser.previous.line);
+}
+void emitBytes(uint8_t byte1, uint8_t byte2) {
+    emitByte(byte1);
+    emitByte(byte2);
+}
