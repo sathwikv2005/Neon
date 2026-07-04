@@ -6,6 +6,7 @@
 #include "chunk.h"
 #include "common.h"
 #include "object.h"
+#include "table.h"
 #include "value.h"
 
 // debug macros
@@ -48,6 +49,7 @@ typedef enum {
 typedef struct {
     Value stack[STACK_MAX];
     const Chunk* chunk;
+    Table strings;
 
     // gc
     size_t bytesAllocated;

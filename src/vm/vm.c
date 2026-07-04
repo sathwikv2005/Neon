@@ -15,12 +15,12 @@ void initvm() {
     vm.nextGC = 1024 * 1024;
     vm.currentGCMark = true;
     vm.ip = 0;
-    // initTable(&vm.strings);
+    initTable(&vm.strings);
 }
 
 void freevm() {
     freeObjects();
-    // freeTable(&vm.strings);
+    freeTable(&vm.strings);
 }
 
 static InterpretResult run() {
