@@ -23,4 +23,8 @@ bool match(TokenType type);
 void parseKey(const char* message);
 void parseValue(const char* message);
 
+// commands
+void getCommand();
+void setCommand();
+
 #endif

@@ -36,7 +36,8 @@ void parseValue(const char* message) {
 }
 
 static void command() {
-    switch (parser.current.type) {
+    advance();
+    switch (parser.previous.type) {
         case TOKEN_GET:
             getCommand();
             break;
@@ -45,8 +46,12 @@ static void command() {
             break;
 
         default:
+            error("unexpected command");
             break;
     }
+
+    // recover from panic mode.
+    if (parser.panicMode) synchronize();
 }
 
 Chunk* compile(const char* source) {
