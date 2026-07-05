@@ -2,6 +2,8 @@
 #define neon_vm_common_h
 
 #include "../../include/memory.h"
+#include "object.h"
+#include "value.h"
 #include "vm.h"
 
 // util

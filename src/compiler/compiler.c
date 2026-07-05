@@ -1,4 +1,5 @@
 #include "compiler_common.h"
+#include "debug.h"
 
 static Chunk compilingChunk;
 Chunk* chunk = &compilingChunk;
@@ -67,6 +68,13 @@ Chunk* compile(const char* source) {
         command();
     }
     if (parser.hadError) return NULL;
+
+#ifdef NEON_DEBUG
+    if (GET_DEBUG_CODE() && !parser.hadError)
+        disassembleChunk(&function->chunk, function->name != NULL
+                                               ? function->name->chars
+                                               : "<script>");
+#endif
 
     return chunk;
 }

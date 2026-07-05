@@ -1,4 +1,7 @@
+#include <stdio.h>
+
 #include "compiler.h"
+#include "debug.h"
 #include "vm_common.h"
 
 VM vm;
@@ -40,25 +43,28 @@ static InterpretResult run() {
 
 #define READ_BYTE() (*ip++)
 #define READ_CONSTANT() (chunk.constants.values[READ_BYTE()])
+
+    while (true) {
 #ifdef NEON_DEBUG
-    if (GET_DEBUG_TRACE()) {
-        printf("Stack=>\t");
-        printf("[ ");
-        for (Value* slot = vm.stack; slot < vm.stackTop; slot++) {
-            printValue(*slot);
-            printf(", ");
+        if (GET_DEBUG_TRACE()) {
+            printf("Stack=>\t");
+            printf("[ ");
+            for (Value* slot = vm.stack; slot < vm.stackTop; slot++) {
+                printValue(*slot);
+                printf(", ");
+            }
+            printf("]");
+            printf("\n");
+            disassembleInstruction(
+                &frame->closure->function->chunk,
+                (int)(ip - frame->closure->function->chunk.code));
+            // printf("==+++++++++==\n");
         }
-        printf("]");
-        printf("\n");
-        disassembleInstruction(
-            &frame->closure->function->chunk,
-            (int)(ip - frame->closure->function->chunk.code));
-        // printf("==+++++++++==\n");
-    }
 #endif
-    uint8_t instruction;
-    switch (instruction = READ_BYTE()) {
-        // op codes
+        uint8_t instruction;
+        switch (instruction = READ_BYTE()) {
+            // op codes
+        }
     }
 }
 
