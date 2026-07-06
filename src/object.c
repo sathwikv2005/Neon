@@ -85,3 +85,57 @@ ObjString* copyString(const char* chars, int length) {
     heapChars[length] = '\0';
     return allocateString(heapChars, length, hash);
 }
+
+static Value stringValue(const char* chars) {
+    return OBJ_VAL(copyString(chars, (int)strlen(chars)));
+}
+
+static void printString(char* str, bool withQuotes) {
+    if (withQuotes) {
+        printf("\"%s\"", str);
+    } else {
+        printf("%s", str);
+    }
+    return;
+}
+
+void printObject(Value value) {
+    switch (OBJ_TYPE(value)) {
+        case OBJ_STRING:
+            printString(AS_CSTRING(value), false);
+            break;
+        default:
+            runtimeError("Unsupported object type.");
+            break;
+    }
+}
+
+ObjString* objTypeName(Value value) {
+    switch (OBJ_TYPE(value)) {
+        case OBJ_STRING:
+            return copyString("string", 6);
+    }
+
+    return copyString("unknown type", 12);
+}
+
+Value valueToString(Value value) {
+    char buffer[32];
+
+    if (IS_NULL(value)) {
+        return stringValue("null");
+    }
+
+    if (IS_NUMBER(value)) {
+        int length =
+            snprintf(buffer, sizeof(buffer), "%.15g", AS_NUMBER(value));
+        return OBJ_VAL(copyString(buffer, length));
+    }
+
+    switch (OBJ_TYPE(value)) {
+        case OBJ_STRING:
+            return value;
+    }
+
+    return NULL_VAL;
+}
