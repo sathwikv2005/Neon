@@ -6,6 +6,7 @@
 #include "parser.h"
 #include "scanner.h"
 #include "value.h"
+#include "vm.h"
 
 // util
 void errorAt(Token* token, const char* message);

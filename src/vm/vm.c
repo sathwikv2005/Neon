@@ -73,8 +73,17 @@ InterpretResult interpret(const char* source) {
         case JUMP_EXIT:
             return INTERPRET_EXIT;
     }
-    const Chunk* chunk = compile(source);
+    Chunk* chunk = compile(source);
+    if (chunk == NULL) {
+        return INTERPRET_COMPILE_ERROR;
+    }
+
     vm.chunk = chunk;
     vm.ip = chunk->code;
-    return run();
+
+    InterpretResult result = run();
+
+    freeChunk(chunk);
+
+    return result;
 }

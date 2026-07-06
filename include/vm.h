@@ -83,6 +83,7 @@ void push(Value value);
 Value pop();
 bool isFalsey(Value value);
 void runtimeError(const char* format, ...);
+void initvm();
 
 InterpretResult interpret(const char* source);
 

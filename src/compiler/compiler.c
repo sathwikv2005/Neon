@@ -73,8 +73,7 @@ Chunk* compile(const char* source) {
     if (parser.hadError) return NULL;
 
 #ifdef NEON_DEBUG
-    if (GET_DEBUG_CODE() && !parser.hadError)
-        disassembleChunk(chunk, "<script>");
+    if (!parser.hadError) disassembleChunk(chunk, "<script>");
 #endif
 
     return chunk;

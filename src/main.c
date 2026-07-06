@@ -43,11 +43,12 @@ static void repl() {
             printf("\n");
             break;
         }
-        // run command.
+        interpret(line);
     }
 }
 
 int main(int argc, const char* argv[]) {
+    initvm();
     repl();
     return 0;
 }
