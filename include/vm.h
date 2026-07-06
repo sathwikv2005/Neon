@@ -39,13 +39,18 @@
 #define STACK_MAX UINT8_COUNT
 
 typedef enum { JUMP_RUNTIME_ERROR = 1, JUMP_EXIT = 2 } JumpReason;
-
 typedef enum {
     INTERPRET_OK,
     INTERPRET_COMPILE_ERROR,
     INTERPRET_RUNTIME_ERROR,
     INTERPRET_EXIT
 } InterpretResult;
+
+typedef struct {
+    InterpretResult status;
+    Value value;
+} InterpretOutput;
+
 typedef struct {
     Value stack[STACK_MAX];
     const Chunk* chunk;
@@ -85,6 +90,6 @@ bool isFalsey(Value value);
 void runtimeError(const char* format, ...);
 void initvm();
 
-InterpretResult interpret(const char* source);
+InterpretOutput interpret(const char* source);
 
 #endif

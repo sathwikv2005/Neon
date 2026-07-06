@@ -6,6 +6,9 @@
 
 VM vm;
 
+#define ERROR_STATUS(status) \
+    (InterpretOutput) { status, NULL_VAL }
+
 void initvm() {
     resetStack();
     vm.objects = NULL;
@@ -26,7 +29,7 @@ void freevm() {
     freeTable(&vm.strings);
 }
 
-static InterpretResult run() {
+static InterpretOutput run() {
     const Chunk* chunk = vm.chunk;
     register uint8_t* ip = vm.ip;
 
@@ -66,22 +69,22 @@ static InterpretResult run() {
     }
 }
 
-InterpretResult interpret(const char* source) {
+InterpretOutput interpret(const char* source) {
     switch (setjmp(vm.vmJmp)) {
         case JUMP_RUNTIME_ERROR:
-            return INTERPRET_RUNTIME_ERROR;
+            return ERROR_STATUS(INTERPRET_RUNTIME_ERROR);
         case JUMP_EXIT:
-            return INTERPRET_EXIT;
+            return ERROR_STATUS(INTERPRET_EXIT);
     }
     Chunk* chunk = compile(source);
     if (chunk == NULL) {
-        return INTERPRET_COMPILE_ERROR;
+        return ERROR_STATUS(INTERPRET_COMPILE_ERROR);
     }
 
     vm.chunk = chunk;
     vm.ip = chunk->code;
 
-    InterpretResult result = run();
+    InterpretOutput result = run();
 
     freeChunk(chunk);
 
