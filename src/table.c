@@ -138,7 +138,7 @@ bool tableDelete(Table* table, ObjString* key) {
 
     table->size--;
     entry->key = NULL;
-    entry->value = BOOL_VAL(true);
+    entry->value = NULL_VAL;
 
     return true;
 }
