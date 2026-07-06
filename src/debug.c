@@ -6,7 +6,7 @@
 #include "object.h"
 #include "value.h"
 
-void disassembleChunk(Chunk* chunk, const char* name) {
+void disassembleChunk(const Chunk* chunk, const char* name) {
     printf("== %s ==\n", name);
     for (int offset = 0; offset < chunk->count;) {
         offset = disassembleInstruction(chunk, offset);
@@ -14,7 +14,8 @@ void disassembleChunk(Chunk* chunk, const char* name) {
     printf("==+++++++++==\n");
 }
 
-static int constantInstruction(const char* name, Chunk* chunk, int offset) {
+static int constantInstruction(const char* name, const Chunk* chunk,
+                               int offset) {
     uint8_t constant = chunk->code[offset + 1];
     printf("%-16s [%4d] => '", name, constant);
     printValue(chunk->constants.values[constant]);
@@ -27,13 +28,13 @@ static int simpleInstruction(const char* name, int offset) {
     return offset + 1;
 }
 
-static int byteInstruction(const char* name, Chunk* chunk, int offset) {
+static int byteInstruction(const char* name, const Chunk* chunk, int offset) {
     uint8_t slot = chunk->code[offset + 1];
     printf("%-16s [%4d]\n", name, slot);
     return offset + 2;
 }
 
-static int jumpInstruction(const char* name, int sign, Chunk* chunk,
+static int jumpInstruction(const char* name, int sign, const Chunk* chunk,
                            int offset) {
     uint16_t jump = (uint16_t)(chunk->code[offset + 1] << 8);
     jump |= chunk->code[offset + 2];
@@ -41,7 +42,7 @@ static int jumpInstruction(const char* name, int sign, Chunk* chunk,
     return offset + 3;
 }
 
-static int invokeInstruction(const char* name, Chunk* chunk, int offset) {
+static int invokeInstruction(const char* name, const Chunk* chunk, int offset) {
     uint8_t constant = chunk->code[offset + 1];
     uint8_t argCount = chunk->code[offset + 2];
     printf("%-16s (%d args) %4d '", name, argCount, constant);
@@ -50,7 +51,7 @@ static int invokeInstruction(const char* name, Chunk* chunk, int offset) {
     return offset + 3;
 }
 
-int disassembleInstruction(Chunk* chunk, int offset) {
+int disassembleInstruction(const Chunk* chunk, int offset) {
     printf("----%04d\t", offset);
     int line = getLine(chunk, offset);
     if (offset > 0 && line == getLine(chunk, offset - 1))

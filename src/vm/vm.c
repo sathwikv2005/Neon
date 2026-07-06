@@ -55,9 +55,7 @@ static InterpretResult run() {
             }
             printf("]");
             printf("\n");
-            disassembleInstruction(
-                &frame->closure->function->chunk,
-                (int)(ip - frame->closure->function->chunk.code));
+            disassembleInstruction(chunk, (int)(ip - chunk->code));
             // printf("==+++++++++==\n");
         }
 #endif
