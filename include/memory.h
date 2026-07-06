@@ -2,6 +2,7 @@
 #define helium_memory_h
 
 #include "common.h"
+#include "object.h"
 
 #define GC_HEAP_GROW_FACTOR 2
 
@@ -23,5 +24,7 @@
 
 void* reallocate(void* pointer, size_t oldSize, size_t newSize);
 void freeObjects();
+void markObject(Obj* object);
+void markValue(Value value);
 
 #endif

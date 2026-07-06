@@ -1,8 +1,11 @@
 #include "compiler_common.h"
 #include "debug.h"
+#include "stdlib.h"
 
 static Chunk compilingChunk;
 Chunk* chunk = &compilingChunk;
+
+Chunk* currentChunk() { return chunk; }
 
 void parseKey(const char* message) {
     consume(TOKEN_STRING, message);

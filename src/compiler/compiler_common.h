@@ -2,6 +2,10 @@
 #define neon_compiler_common_h
 
 #include "compiler.h"
+#include "object.h"
+#include "parser.h"
+#include "scanner.h"
+#include "value.h"
 
 // util
 void errorAt(Token* token, const char* message);
@@ -22,6 +26,7 @@ bool match(TokenType type);
 // compiler
 void parseKey(const char* message);
 void parseValue(const char* message);
+Chunk* currentChunk();
 
 // commands
 void getCommand();
