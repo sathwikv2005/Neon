@@ -9,6 +9,8 @@ VM vm;
 #define ERROR_STATUS(status) \
     (InterpretOutput) { status, NULL_VAL }
 
+#define INTERPRET_RESULT(value) ((InterpretOutput){INTERPRET_OK, value})
+
 void initvm() {
     resetStack();
     vm.objects = NULL;
@@ -45,7 +47,8 @@ static InterpretOutput run() {
     } while (false)
 
 #define READ_BYTE() (*ip++)
-#define READ_CONSTANT() (chunk.constants.values[READ_BYTE()])
+#define READ_CONSTANT() (chunk->constants.values[READ_BYTE()])
+#define READ_STRING() AS_STRING(READ_CONSTANT())
 
     while (true) {
 #ifdef NEON_DEBUG
@@ -64,7 +67,8 @@ static InterpretOutput run() {
 #endif
         uint8_t instruction;
         switch (instruction = READ_BYTE()) {
-            // op codes
+            default:
+                break;
         }
     }
 }
