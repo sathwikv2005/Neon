@@ -54,16 +54,6 @@ typedef struct {
 typedef struct {
     Value stack[STACK_MAX];
     const Chunk* chunk;
-    Table strings;
-
-    // gc
-    size_t bytesAllocated;
-    size_t nextGC;
-    Obj* objects;
-    int grayCount;
-    int grayCapacity;
-    Obj** grayStack;
-    bool currentGCMark;
 
     /*
         Invariant:
@@ -81,8 +71,6 @@ typedef struct {
     // debug flags
     uint8_t debugFlags;
 } VM;
-
-extern VM vm;
 
 void push(Value value);
 Value pop();

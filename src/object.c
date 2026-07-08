@@ -4,8 +4,8 @@
 #include <string.h>
 
 #include "../include/memory.h"
+#include "server.h"
 #include "value.h"
-#include "vm.h"
 
 #define ALLOCATE_OBJ(type, objectType) \
     (type*)allocateObject(sizeof(type), objectType)
@@ -14,8 +14,8 @@ static Obj* allocateObject(size_t size, ObjType type) {
     Obj* object = (Obj*)reallocate(NULL, 0, size);
     object->type = type;
     // object->isMarked = !vm.currentGCMark;
-    object->next = vm.objects;
-    vm.objects = object;
+    object->next = server.objects;
+    server.objects = object;
 
     // #ifdef HELIUM_DEBUG
     //     if (GET_DEBUG_LOG_GC())
@@ -33,7 +33,7 @@ static ObjString* allocateString(char* chars, int length, uint32_t hash) {
 
     push(OBJ_VAL(string));
 
-    tableSet(&vm.strings, string, NULL_VAL);
+    tableSet(&server.strings, string, NULL_VAL);
 
     pop();
 
@@ -58,7 +58,7 @@ static uint32_t hashString(const char* key, int length) {
 ObjString* takeString(char* chars, int length) {
     uint32_t hash = hashString(chars, length);
 
-    ObjString* interned = tableFindString(&vm.strings, chars, length, hash);
+    ObjString* interned = tableFindString(&server.strings, chars, length, hash);
 
     if (interned != NULL) {
         FREE_ARRAY(char, chars, length + 1);
@@ -77,7 +77,7 @@ ObjString* takeString(char* chars, int length) {
 ObjString* copyString(const char* chars, int length) {
     uint32_t hash = hashString(chars, length);
 
-    ObjString* interned = tableFindString(&vm.strings, chars, length, hash);
+    ObjString* interned = tableFindString(&server.strings, chars, length, hash);
     if (interned != NULL) return interned;
 
     char* heapChars = ALLOCATE(char, length + 1);

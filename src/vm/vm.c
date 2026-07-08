@@ -13,22 +13,21 @@ VM vm;
 
 void initvm() {
     resetStack();
-    vm.objects = NULL;
-    vm.grayCount = 0;
-    vm.grayCapacity = 0;
-    vm.grayStack = NULL;
+    // vm.objects = NULL;
+    // vm.grayCount = 0;
+    // vm.grayCapacity = 0;
+    // vm.grayStack = NULL;
     vm.debugFlags = 0;
     vm.atLineStart = true;
-    vm.bytesAllocated = 0;
-    vm.nextGC = 1024 * 1024;
-    vm.currentGCMark = true;
+    // vm.bytesAllocated = 0;
+    // vm.nextGC = 1024 * 1024;
+    // vm.currentGCMark = true;
     vm.ip = 0;
     initTable(&vm.strings);
 }
 
-void freevm() {
-    freeObjects();
-    freeTable(&vm.strings);
+void freevm(VM vm) {
+    //
 }
 
 static InterpretOutput run() {

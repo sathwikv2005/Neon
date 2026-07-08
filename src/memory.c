@@ -1,11 +1,11 @@
 #include "../include/memory.h"
 
 #include "compiler.h"
+#include "server.h"
 #include "stdlib.h"
-#include "vm.h"
 
 void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
-    vm.bytesAllocated += newSize - oldSize;
+    server.bytesAllocated += newSize - oldSize;
 
     // #ifdef NEON_DEBUG
     //     if (newSize > oldSize) {
@@ -26,7 +26,7 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
 //    references can later be traversed and marked.
 // */
 // void markObject(Obj* object) {
-//     if (object == NULL || object->isMarked == vm.currentGCMark) return;
+//     if (object == NULL || object->isMarked == server.currentGCMark) return;
 // #ifdef HELIUM_DEBUG
 //     if (GET_DEBUG_LOG_GC()) {
 //         printf("%p mark ", (void*)object);
@@ -34,15 +34,15 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
 //         printf("\n");
 //     }
 // #endif
-//     object->isMarked = vm.currentGCMark;
+//     object->isMarked = server.currentGCMark;
 
-//     if (vm.grayCapacity < vm.grayCount + 1) {
-//         vm.grayCapacity = GROW_CAPACITY(vm.grayCapacity);
-//         vm.grayStack = realloc(vm.grayStack, sizeof(Obj*) * vm.grayCapacity);
-//         if (vm.grayStack == NULL) exit(1);
+//     if (server.grayCapacity < server.grayCount + 1) {
+//         server.grayCapacity = GROW_CAPACITY(server.grayCapacity);
+//         server.grayStack = realloc(server.grayStack, sizeof(Obj*) *
+//         server.grayCapacity); if (server.grayStack == NULL) exit(1);
 //     }
 
-//     vm.grayStack[vm.grayCount++] = object;
+//     server.grayStack[server.grayCount++] = object;
 // }
 
 // void markValue(Value value) {
@@ -88,14 +88,14 @@ static void freeObject(Obj* object) {
 }
 
 void freeObjects() {
-    Obj* object = vm.objects;
+    Obj* object = server.objects;
     while (object != NULL) {
         Obj* next = object->next;
         freeObject(object);
         object = next;
     }
 
-    free(vm.grayStack);
+    // free(server.grayStack);
 }
 
 // /*
@@ -104,7 +104,7 @@ void freeObjects() {
 //     Any object reachable from these roots is considered live.
 // */
 // static void markRoots() {
-//     for (Value* slot = vm.stack; slot < vm.stackTop; slot++) {
+//     for (Value* slot = server.stack; slot < server.stackTop; slot++) {
 //         markValue(*slot);
 //     }
 //     markCompilerRoots();
@@ -114,8 +114,8 @@ void freeObjects() {
 //     Traverses the gray stack until all reachable objects are visited
 // */
 // static void traceReferences() {
-//     while (vm.grayCount > 0) {
-//         Obj* object = vm.grayStack[--vm.grayCount];
+//     while (server.grayCount > 0) {
+//         Obj* object = server.grayStack[--server.grayCount];
 //         blackenObject(object);
 //     }
 // }
@@ -125,9 +125,9 @@ void freeObjects() {
 // */
 // static void sweep() {
 //     Obj* previous = NULL;
-//     Obj* object = vm.objects;
+//     Obj* object = server.objects;
 //     while (object != NULL) {
-//         if (object->isMarked == vm.currentGCMark) {
+//         if (object->isMarked == server.currentGCMark) {
 //             previous = object;
 //             object = object->next;
 //             continue;
@@ -137,7 +137,7 @@ void freeObjects() {
 //         if (previous != NULL) {
 //             previous->next = object;
 //         } else {
-//             vm.objects = object;
+//             server.objects = object;
 //         }
 
 //         freeObject(unreached);
@@ -163,28 +163,28 @@ void freeObjects() {
 //     size_t before = 0;
 //     if (GET_DEBUG_LOG_GC()) {
 //         printf("------ gc begin\n");
-//         before = vm.bytesAllocated;
+//         before = server.bytesAllocated;
 //     }
 // #endif
 
 //     markRoots();
 //     traceReferences();
-//     // tableRemoveWhite(&vm.strings);
+//     // tableRemoveWhite(&server.strings);
 //     sweep();
 
 //     // flip the mark bit, so all surviving objects appear as unmarked for
 //     next
 //     // cycle.
-//     vm.currentGCMark = !vm.currentGCMark;
+//     server.currentGCMark = !server.currentGCMark;
 
-//     vm.nextGC = vm.bytesAllocated * GC_HEAP_GROW_FACTOR;
+//     server.nextGC = server.bytesAllocated * GC_HEAP_GROW_FACTOR;
 
 // #ifdef HELIUM_DEBUG
 //     if (GET_DEBUG_LOG_GC()) {
 //         printf("------ gc end\n");
 //         printf("   collected %zu bytes (from %zu to %zu) next at %zu\n",
-//                before - vm.bytesAllocated, before, vm.bytesAllocated,
-//                vm.nextGC);
+//                before - server.bytesAllocated, before, server.bytesAllocated,
+//                server.nextGC);
 //     }
 // #endif
 // }
