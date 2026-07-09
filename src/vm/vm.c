@@ -4,35 +4,32 @@
 #include "debug.h"
 #include "vm_common.h"
 
-VM vm;
-
 #define ERROR_STATUS(status) \
     (InterpretOutput) { status, NULL_VAL }
 
 #define INTERPRET_RESULT(value) ((InterpretOutput){INTERPRET_OK, value})
 
-void initvm() {
+void initvm(VM* vm) {
     resetStack();
-    // vm.objects = NULL;
-    // vm.grayCount = 0;
-    // vm.grayCapacity = 0;
-    // vm.grayStack = NULL;
-    vm.debugFlags = 0;
-    vm.atLineStart = true;
-    // vm.bytesAllocated = 0;
-    // vm.nextGC = 1024 * 1024;
-    // vm.currentGCMark = true;
-    vm.ip = 0;
-    initTable(&vm.strings);
+    // vm->objects = NULL;
+    // vm->grayCount = 0;
+    // vm->grayCapacity = 0;
+    // vm->grayStack = NULL;
+    vm->debugFlags = 0;
+    vm->atLineStart = true;
+    // vm->bytesAllocated = 0;
+    // vm->nextGC = 1024 * 1024;
+    // vm->currentGCMark = true;
+    vm->ip = 0;
 }
 
-void freevm(VM vm) {
+void freevm(VM* vm) {
     //
 }
 
-static InterpretOutput run() {
-    const Chunk* chunk = vm.chunk;
-    register uint8_t* ip = vm.ip;
+static InterpretOutput run(VM* vm) {
+    const Chunk* chunk = vm->chunk;
+    register uint8_t* ip = vm->ip;
 
 /*
     The ip is cached locally so, that the c compiler can store it in a register
@@ -72,8 +69,8 @@ static InterpretOutput run() {
     }
 }
 
-InterpretOutput interpret(const char* source) {
-    switch (setjmp(vm.vmJmp)) {
+InterpretOutput interpret(const char* source, VM* vm) {
+    switch (setjmp(vm->vmJmp)) {
         case JUMP_RUNTIME_ERROR:
             return ERROR_STATUS(INTERPRET_RUNTIME_ERROR);
         case JUMP_EXIT:
@@ -84,10 +81,10 @@ InterpretOutput interpret(const char* source) {
         return ERROR_STATUS(INTERPRET_COMPILE_ERROR);
     }
 
-    vm.chunk = chunk;
-    vm.ip = chunk->code;
+    vm->chunk = chunk;
+    vm->ip = chunk->code;
 
-    InterpretOutput result = run();
+    InterpretOutput result = run(vm);
 
     freeChunk(chunk);
 

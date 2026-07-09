@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "common.h"
+#include "engine.h"
 #include "vm.h"
 
 #ifdef _WIN32
@@ -37,18 +38,18 @@ static void repl() {
         printBanner();
     }
     char line[1024];
+    Engine* engine = createEngine();
     for (;;) {
         printf("> ");
         if (!fgets(line, sizeof(line), stdin)) {
             printf("\n");
             break;
         }
-        interpret(line);
+        interpret(line, &engine->vm);
     }
 }
 
 int main(int argc, const char* argv[]) {
-    initvm();
     repl();
     return 0;
 }

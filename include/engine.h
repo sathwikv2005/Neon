@@ -1,0 +1,13 @@
+#ifndef neon_engine_h
+#define neon_engine_h
+
+#include "vm.h"
+
+typedef struct {
+    VM vm;
+} Engine;
+
+Engine* createEngine();
+void freeEngine(Engine* engine);
+
+#endif

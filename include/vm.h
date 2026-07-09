@@ -76,8 +76,9 @@ void push(Value value);
 Value pop();
 bool isFalsey(Value value);
 void runtimeError(const char* format, ...);
-void initvm();
+void initvm(VM* vm);
+void freevm(VM* vm);
 
-InterpretOutput interpret(const char* source);
+InterpretOutput interpret(const char* source, VM* vm);
 
 #endif
