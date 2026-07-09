@@ -6,6 +6,7 @@
 #include "../include/memory.h"
 #include "server.h"
 #include "value.h"
+#include "vm.h"
 
 #define ALLOCATE_OBJ(type, objectType) \
     (type*)allocateObject(sizeof(type), objectType)
@@ -31,11 +32,11 @@ static ObjString* allocateString(char* chars, int length, uint32_t hash) {
     string->chars = chars;
     string->hash = hash;
 
-    push(OBJ_VAL(string));
+    // push(OBJ_VAL(string));
 
     tableSet(&server.strings, string, NULL_VAL);
 
-    pop();
+    // pop();
 
     return string;
 }
@@ -105,7 +106,6 @@ void printObject(Value value) {
             printString(AS_CSTRING(value), false);
             break;
         default:
-            runtimeError("Unsupported object type.");
             break;
     }
 }

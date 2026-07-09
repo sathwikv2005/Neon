@@ -7,9 +7,9 @@
 #include "vm.h"
 
 // util
-Value peek(int distance);
+Value peek(VM* vm, int distance);
 bool isFalsey(Value value);
-void concatenate();
-void resetStack();
+void concatenate(VM* vm);
+void resetStack(VM* vm);
 
 #endif

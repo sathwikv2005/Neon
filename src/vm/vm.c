@@ -10,7 +10,7 @@
 #define INTERPRET_RESULT(value) ((InterpretOutput){INTERPRET_OK, value})
 
 void initvm(VM* vm) {
-    resetStack();
+    resetStack(vm);
     // vm->objects = NULL;
     // vm->grayCount = 0;
     // vm->grayCapacity = 0;
@@ -36,12 +36,14 @@ static InterpretOutput run(VM* vm) {
     for faster access hence, the ip must be written back to the call frame so
     that the runtimeError() can report the correct source line.
 */
-#define RUNTIME_ERROR(...)         \
-    do {                           \
-        vm.ip = ip;                \
-        runtimeError(__VA_ARGS__); \
+#define RUNTIME_ERROR(...)             \
+    do {                               \
+        vm->ip = ip;                   \
+        runtimeError(vm, __VA_ARGS__); \
     } while (false)
-
+#define PUSH(v) push(vm, (v))
+#define POP() pop(vm)
+#define PEEK(n) peek(vm, (n))
 #define READ_BYTE() (*ip++)
 #define READ_CONSTANT() (chunk->constants.values[READ_BYTE()])
 #define READ_STRING() AS_STRING(READ_CONSTANT())
@@ -67,6 +69,7 @@ static InterpretOutput run(VM* vm) {
                 break;
         }
     }
+    return ERROR_STATUS(INTERPRET_RUNTIME_ERROR);
 }
 
 InterpretOutput interpret(const char* source, VM* vm) {

@@ -3,8 +3,8 @@
 
 #include "vm_common.h"
 
-void runtimeError(const char* format, ...) {
-    if (!vm.atLineStart) putchar('\n');
+void runtimeError(VM* vm, const char* format, ...) {
+    if (!vm->atLineStart) putchar('\n');
     fprintf(stderr, ANSI_RED "Runtime Error: " ANSI_RESET);
     va_list args;
     va_start(args, format);
@@ -12,31 +12,31 @@ void runtimeError(const char* format, ...) {
     va_end(args);
     fputs("\n", stderr);
 
-    resetStack();
-    longjmp(vm.vmJmp, JUMP_RUNTIME_ERROR);
+    resetStack(vm);
+    longjmp(vm->vmJmp, JUMP_RUNTIME_ERROR);
 }
 
-Value peek(int distance) { return vm.stackTop[-1 - distance]; }
+Value peek(VM* vm, int distance) { return vm->stackTop[-1 - distance]; }
 
-void push(Value value) {
-    if (vm.stackTop == vm.stack + STACK_MAX) {
-        runtimeError("Stack overflow error.");
+void push(VM* vm, Value value) {
+    if (vm->stackTop == vm->stack + STACK_MAX) {
+        runtimeError(vm, "Stack overflow error.");
     }
-    *vm.stackTop++ = value;
+    *vm->stackTop++ = value;
 }
 
-Value pop() {
-    if (vm.stackTop == vm.stack) {
-        runtimeError("Stack underflow error.");
+Value pop(VM* vm) {
+    if (vm->stackTop == vm->stack) {
+        runtimeError(vm, "Stack underflow error.");
     }
-    return *--vm.stackTop;
+    return *--vm->stackTop;
 }
 
 bool isFalsey(Value value) { return IS_NULL(value); }
 
-void concatenate() {
-    ObjString* b = AS_STRING(valueToString(peek(0)));
-    ObjString* a = AS_STRING(valueToString(peek(1)));
+void concatenate(VM* vm) {
+    ObjString* b = AS_STRING(valueToString(peek(vm, 0)));
+    ObjString* a = AS_STRING(valueToString(peek(vm, 1)));
 
     int length = a->length + b->length;
     char* chars = ALLOCATE(char, length + 1);
@@ -45,9 +45,9 @@ void concatenate() {
     chars[length] = '\0';
 
     ObjString* result = takeString(chars, length);
-    pop();
-    pop();
-    push(OBJ_VAL(result));
+    pop(vm);
+    pop(vm);
+    push(vm, OBJ_VAL(result));
 }
 
-void resetStack() { vm.stackTop = vm.stack; }
+void resetStack(VM* vm) { vm->stackTop = vm->stack; }

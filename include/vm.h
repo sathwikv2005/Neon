@@ -51,7 +51,7 @@ typedef struct {
     Value value;
 } InterpretOutput;
 
-typedef struct {
+typedef struct VM {
     Value stack[STACK_MAX];
     const Chunk* chunk;
 
@@ -72,10 +72,10 @@ typedef struct {
     uint8_t debugFlags;
 } VM;
 
-void push(Value value);
-Value pop();
+void push(VM* vm, Value value);
+Value pop(VM* vm);
 bool isFalsey(Value value);
-void runtimeError(const char* format, ...);
+void runtimeError(VM* vm, const char* format, ...);
 void initvm(VM* vm);
 void freevm(VM* vm);
 
