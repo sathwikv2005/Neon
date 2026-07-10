@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "common.h"
 #include "engine.h"
@@ -41,12 +42,37 @@ static void repl() {
     Engine* engine = createEngine();
     for (;;) {
         printf("> ");
+
         if (!fgets(line, sizeof(line), stdin)) {
             printf("\n");
             break;
         }
-        interpret(line, &engine->vm);
+
+        InterpretOutput result = interpret(line, &engine->vm);
+
+        switch (result.status) {
+            case INTERPRET_COMPILE_ERROR:
+                fprintf(stderr,
+                        ANSI_BOLD ANSI_RED "Syntax error: " ANSI_RESET "%s\n",
+                        engine->vm.error);
+                break;
+
+            case INTERPRET_RUNTIME_ERROR:
+                fprintf(stderr,
+                        ANSI_BOLD ANSI_RED "Command error: " ANSI_RESET "%s\n",
+                        engine->vm.error);
+                break;
+
+            case INTERPRET_EXIT:
+                freeEngine(engine);
+                return;
+
+            case INTERPRET_OK:
+                printValue(result.value);
+                break;
+        }
     }
+    freeEngine(engine);
 }
 
 int main(int argc, const char* argv[]) {
