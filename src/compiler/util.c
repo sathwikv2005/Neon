@@ -14,12 +14,11 @@ static void verrorAt(Compiler* compiler, Token* token, const char* fmt,
     vsnprintf(message, sizeof(message), fmt, args);
 
     if (token->type == TOKEN_EOF) {
-        setError(vm, "Compiler Error %d at end: %s", token->line, message);
+        setError(vm, "at end: %s", message);
     } else if (token->type == TOKEN_ERROR) {
-        setError(vm, "Compiler Error %d: %s", token->line, message);
+        setError(vm, "%s", message);
     } else {
-        setError(vm, "Compiler Error %d at '%.*s': %s", token->line,
-                 token->length, token->start, message);
+        setError(vm, "at '%.*s': %s", token->length, token->start, message);
     }
 
     compiler->parser->hadError = true;
