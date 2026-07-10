@@ -3,6 +3,32 @@
 
 #include "vm_common.h"
 
+static void vsetError(VM* vm, const char* fmt, va_list args) {
+    va_list copy;
+    va_copy(copy, args);
+
+    int length = vsnprintf(NULL, 0, fmt, copy);
+    va_end(copy);
+
+    if (length < 0) return;
+
+    size_t required = (size_t)length + 1;
+
+    if (required > vm->errorCapacity) {
+        vm->error = GROW_ARRAY(char, vm->error, vm->errorCapacity, required);
+        vm->errorCapacity = required;
+    }
+
+    vsnprintf(vm->error, vm->errorCapacity, fmt, args);
+}
+
+void setError(VM* vm, const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    vsetError(vm, fmt, args);
+    va_end(args);
+}
+
 void runtimeError(VM* vm, const char* format, ...) {
     va_list args;
     va_start(args, format);
@@ -50,29 +76,3 @@ void concatenate(VM* vm) {
 }
 
 void resetStack(VM* vm) { vm->stackTop = vm->stack; }
-
-static void vsetError(VM* vm, const char* fmt, va_list args) {
-    va_list copy;
-    va_copy(copy, args);
-
-    int length = vsnprintf(NULL, 0, fmt, copy);
-    va_end(copy);
-
-    if (length < 0) return;
-
-    size_t required = (size_t)length + 1;
-
-    if (required > vm->errorCapacity) {
-        vm->error = GROW_ARRAY(char, vm->error, vm->errorCapacity, required);
-        vm->errorCapacity = required;
-    }
-
-    vsnprintf(vm->error, vm->errorCapacity, fmt, args);
-}
-
-void setError(VM* vm, const char* fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    vsetError(vm, fmt, args);
-    va_end(args);
-}
