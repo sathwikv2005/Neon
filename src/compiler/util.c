@@ -1,27 +1,35 @@
+#include <stdarg.h>
 #include <stdio.h>
 
 #include "compiler_common.h"
 
-void errorAt(Compiler* compiler, Token* token, const char* message) {
+static void verrorAt(Compiler* compiler, Token* token, const char* fmt,
+                     va_list args) {
     if (compiler->parser->panicMode) return;
     compiler->parser->panicMode = true;
-    fprintf(stderr, ANSI_RED "Compiler Error: " ANSI_RESET);
-    fprintf(stderr, ANSI_YELLOW "%d:" ANSI_RESET, token->line);
+
+    VM* vm = compiler->vm;
+
+    char message[1024];
+    vsnprintf(message, sizeof(message), fmt, args);
 
     if (token->type == TOKEN_EOF) {
-        fprintf(stderr, ANSI_DIM " at " ANSI_RESET ANSI_BOLD ANSI_CYAN
-                                 "end" ANSI_RESET);
+        setError(vm, "Compiler Error %d at end: %s", token->line, message);
     } else if (token->type == TOKEN_ERROR) {
-        // nothing
+        setError(vm, "Compiler Error %d: %s", token->line, message);
     } else {
-        fprintf(stderr,
-                ANSI_DIM " at " ANSI_RESET ANSI_BOLD ANSI_CYAN
-                         "'%.*s'" ANSI_RESET,
-                token->length, token->start);
+        setError(vm, "Compiler Error %d at '%.*s': %s", token->line,
+                 token->length, token->start, message);
     }
 
-    fprintf(stderr, ": %s\n", message);
     compiler->parser->hadError = true;
+}
+
+void errorAt(Compiler* compiler, Token* token, const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    verrorAt(compiler, token, fmt, args);
+    va_end(args);
 }
 
 void error(Compiler* compiler, const char* message) {

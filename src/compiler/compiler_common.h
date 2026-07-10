@@ -8,7 +8,7 @@
 #include "value.h"
 
 // util
-void errorAt(Compiler* compiler, Token* token, const char* message);
+void errorAt(Compiler* compiler, Token* token, const char* fmt, ...);
 void error(Compiler* compiler, const char* message);
 void errorAtCurrent(Compiler* compiler, const char* message);
 uint8_t makeConstant(Compiler* compiler, Value value);
