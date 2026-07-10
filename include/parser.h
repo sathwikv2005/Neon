@@ -10,4 +10,6 @@ typedef struct {
     bool panicMode;
 } Parser;
 
+void initParser(Parser* parser);
+
 #endif

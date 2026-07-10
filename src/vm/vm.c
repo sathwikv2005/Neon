@@ -83,17 +83,18 @@ InterpretOutput interpret(const char* source, VM* vm) {
         case JUMP_EXIT:
             return ERROR_STATUS(INTERPRET_EXIT);
     }
-    Chunk* chunk = compile(source);
-    if (chunk == NULL) {
+    Chunk chunk;
+    initChunk(&chunk);
+    if (!compile(vm, source, &chunk)) {
         return ERROR_STATUS(INTERPRET_COMPILE_ERROR);
     }
 
-    vm->chunk = chunk;
-    vm->ip = chunk->code;
+    vm->chunk = &chunk;
+    vm->ip = chunk.code;
 
     InterpretOutput result = run(vm);
 
-    freeChunk(chunk);
+    freeChunk(&chunk);
 
     return result;
 }

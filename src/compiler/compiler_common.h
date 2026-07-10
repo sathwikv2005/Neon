@@ -6,31 +6,29 @@
 #include "parser.h"
 #include "scanner.h"
 #include "value.h"
-#include "vm.h"
 
 // util
-void errorAt(Token* token, const char* message);
-void error(const char* message);
-void errorAtCurrent(const char* message);
-uint8_t makeConstant(Value value);
-void emitByte(uint8_t byte);
-void emitBytes(uint8_t byte1, uint8_t byte2);
+void errorAt(Compiler* compiler, Token* token, const char* message);
+void error(Compiler* compiler, const char* message);
+void errorAtCurrent(Compiler* compiler, const char* message);
+uint8_t makeConstant(Compiler* compiler, Value value);
+void emitByte(Compiler* compiler, uint8_t byte);
+void emitBytes(Compiler* compiler, uint8_t byte1, uint8_t byte2);
 
 // parser
-extern Parser parser;
-void synchronize();
-void advance();
-void consume(TokenType type, const char* message);
-bool check(TokenType type);
-bool match(TokenType type);
+void synchronize(Compiler* compiler);
+void advance(Compiler* compiler);
+void consume(Compiler* compiler, TokenType type, const char* message);
+bool check(Parser* parser, TokenType type);
+bool match(Compiler* compiler, TokenType type);
 
 // compiler
-void parseKey(const char* message);
-void parseValue(const char* message);
-Chunk* currentChunk();
+void parseKey(Compiler* compiler, const char* message);
+void parseValue(Compiler* compiler, const char* message);
+Chunk* currentChunk(Compiler* compiler);
 
 // commands
-void getCommand();
-void setCommand();
+void getCommand(Compiler* compiler);
+void setCommand(Compiler* compiler);
 
 #endif

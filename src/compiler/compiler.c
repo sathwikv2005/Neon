@@ -2,81 +2,87 @@
 #include "debug.h"
 #include "stdlib.h"
 
-static Chunk compilingChunk;
-Chunk* chunk = &compilingChunk;
+Chunk* currentChunk(Compiler* compiler) { return compiler->chunk; }
 
-Chunk* currentChunk() { return chunk; }
+void parseKey(Compiler* compiler, const char* message) {
+    consume(compiler, TOKEN_STRING, message);
+    ObjString* key = copyString(compiler->parser->previous.start,
+                                compiler->parser->previous.length);
 
-void parseKey(const char* message) {
-    consume(TOKEN_STRING, message);
-    ObjString* key = copyString(parser.previous.start, parser.previous.length);
-
-    uint8_t constant = makeConstant(OBJ_VAL(key));
-    emitByte(constant);
+    uint8_t constant = makeConstant(compiler, OBJ_VAL(key));
+    emitByte(compiler, constant);
 }
 
-void parseValue(const char* message) {
+void parseValue(Compiler* compiler, const char* message) {
     uint8_t constant = 0;
-    switch (parser.current.type) {
+    switch (compiler->parser->current.type) {
         case TOKEN_STRING: {
-            ObjString* value =
-                copyString(parser.current.start, parser.current.length);
+            ObjString* value = copyString(compiler->parser->current.start,
+                                          compiler->parser->current.length);
 
-            constant = makeConstant(OBJ_VAL(value));
+            constant = makeConstant(compiler, OBJ_VAL(value));
             break;
         }
 
         case TOKEN_NUMBER: {
-            double value = strtod(parser.current.start, NULL);
-            constant = makeConstant(NUMBER_VAL(value));
+            double value = strtod(compiler->parser->current.start, NULL);
+            constant = makeConstant(compiler, NUMBER_VAL(value));
             break;
         }
         default:
-            error(message);
+            error(compiler, message);
             return;
     }
-    emitByte(constant);
-    advance();
+    emitByte(compiler, constant);
+    advance(compiler);
 }
 
-static void command() {
-    advance();
-    switch (parser.previous.type) {
+static void command(Compiler* compiler) {
+    advance(compiler);
+    switch (compiler->parser->previous.type) {
         case TOKEN_GET:
-            getCommand();
+            getCommand(compiler);
             break;
         case TOKEN_SET:
-            setCommand();
+            setCommand(compiler);
             break;
 
         default:
-            error("unexpected command");
+            error(compiler, "unexpected command");
             break;
     }
 
     // recover from panic mode.
-    if (parser.panicMode) synchronize();
+    if (compiler->parser->panicMode) synchronize(compiler);
 }
 
-Chunk* compile(const char* source) {
+static void initCompiler(Compiler* compiler, VM* vm, Parser* parser,
+                         Chunk* chunk) {
+    compiler->vm = vm;
+    compiler->parser = parser;
+    compiler->chunk = chunk;
+}
+
+bool compile(VM* vm, const char* source, Chunk* chunk) {
     initScanner(source);
 
-    initChunk(chunk);
-    parser.hadError = false;
-    parser.panicMode = false;
+    Parser parser;
+    initParser(&parser);
+    Compiler compiler;
+    initCompiler(&compiler, vm, &parser, chunk);
 
-    advance();
+    advance(&compiler);
 
-    while (!match(TOKEN_EOF)) {
-        command();
+    while (!match(&compiler, TOKEN_EOF)) {
+        command(&compiler);
     }
-    if (parser.hadError) return NULL;
+    if (parser.hadError) return false;
 
 #ifdef NEON_DEBUG
     if (!parser.hadError) disassembleChunk(chunk, "<script>");
 #endif
 
-    return chunk;
+    return true;
 }
 
 void markCompilerRoots() {

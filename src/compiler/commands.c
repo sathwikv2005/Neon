@@ -1,12 +1,12 @@
 #include "compiler_common.h"
 
-void getCommand() {
-    emitByte(OP_GET);
-    parseKey("expect a key after 'GET'");
+void getCommand(Compiler* compiler) {
+    emitByte(compiler, OP_GET);
+    parseKey(compiler, "expect a key after 'GET'");
 }
 
-void setCommand() {
-    emitByte(OP_SET);
-    parseKey("expect a key after 'SET'");
-    parseValue("expect a value after key");
+void setCommand(Compiler* compiler) {
+    emitByte(compiler, OP_SET);
+    parseKey(compiler, "expect a key after 'SET'");
+    parseValue(compiler, "expect a value after key");
 }

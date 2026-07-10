@@ -3,46 +3,51 @@
 #define IS_COMMAND(type) \
     ((type) > TOKEN_COMMANDS_START && (type) < TOKEN_COMMANDS_END)
 
-Parser parser;
+void initParser(Parser* parser) {
+    parser->hadError = false;
+    parser->panicMode = false;
+}
 
 /*
     Panic mode suppresses cascading compiler errors.
 
     Once synchronization is reached, normal parsing resumes.
 */
-void synchronize() {
-    parser.panicMode = false;
+void synchronize(Compiler* compiler) {
+    compiler->parser->panicMode = false;
 
-    while (parser.current.type != TOKEN_EOF) {
-        if (IS_COMMAND(parser.current.type)) {
+    while (compiler->parser->current.type != TOKEN_EOF) {
+        if (IS_COMMAND(compiler->parser->current.type)) {
             return;
         }
 
-        advance();
+        advance(compiler);
     }
 }
 
-void advance() {
-    parser.previous = parser.current;
+void advance(Compiler* compiler) {
+    compiler->parser->previous = compiler->parser->current;
     for (;;) {
-        parser.current = scanToken();
-        if (parser.current.type != TOKEN_ERROR) break;
-        errorAtCurrent(parser.current.start);
+        compiler->parser->current = scanToken();
+        if (compiler->parser->current.type != TOKEN_ERROR) break;
+        errorAtCurrent(compiler, compiler->parser->current.start);
     }
 }
 
-void consume(TokenType type, const char* message) {
-    if (parser.current.type == type) {
-        advance();
+void consume(Compiler* compiler, TokenType type, const char* message) {
+    if (compiler->parser->current.type == type) {
+        advance(compiler);
         return;
     }
-    errorAtCurrent(message);
+    errorAtCurrent(compiler, message);
 }
 
-bool check(TokenType type) { return parser.current.type == type; }
+bool check(Parser* parser, TokenType type) {
+    return parser->current.type == type;
+}
 
-bool match(TokenType type) {
-    if (!check(type)) return false;
-    advance();
+bool match(Compiler* compiler, TokenType type) {
+    if (!check(compiler->parser, type)) return false;
+    advance(compiler);
     return true;
 }
