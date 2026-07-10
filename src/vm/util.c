@@ -4,13 +4,12 @@
 #include "vm_common.h"
 
 void runtimeError(VM* vm, const char* format, ...) {
-    if (!vm->atLineStart) putchar('\n');
-    fprintf(stderr, ANSI_RED "Runtime Error: " ANSI_RESET);
     va_list args;
     va_start(args, format);
-    vfprintf(stderr, format, args);
+
+    vsetError(vm, format, args);
+
     va_end(args);
-    fputs("\n", stderr);
 
     resetStack(vm);
     longjmp(vm->vmJmp, JUMP_RUNTIME_ERROR);
@@ -51,3 +50,29 @@ void concatenate(VM* vm) {
 }
 
 void resetStack(VM* vm) { vm->stackTop = vm->stack; }
+
+static void vsetError(VM* vm, const char* fmt, va_list args) {
+    va_list copy;
+    va_copy(copy, args);
+
+    int length = vsnprintf(NULL, 0, fmt, copy);
+    va_end(copy);
+
+    if (length < 0) return;
+
+    size_t required = (size_t)length + 1;
+
+    if (required > vm->errorCapacity) {
+        vm->error = GROW_ARRAY(char, vm->error, vm->errorCapacity, required);
+        vm->errorCapacity = required;
+    }
+
+    vsnprintf(vm->error, vm->errorCapacity, fmt, args);
+}
+
+void setError(VM* vm, const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    vsetError(vm, fmt, args);
+    va_end(args);
+}

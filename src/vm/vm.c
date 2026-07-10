@@ -21,10 +21,14 @@ void initvm(VM* vm) {
     // vm->nextGC = 1024 * 1024;
     // vm->currentGCMark = true;
     vm->ip = 0;
+    vm->error = NULL;
+    vm->errorCapacity = 0;
 }
 
 void freevm(VM* vm) {
-    //
+    FREE_ARRAY(char, vm->error, vm->errorCapacity);
+    vm->error = NULL;
+    vm->errorCapacity = 0;
 }
 
 static InterpretOutput run(VM* vm) {

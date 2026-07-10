@@ -65,6 +65,8 @@ typedef struct VM {
 
     int exitCode;
     jmp_buf vmJmp;
+    char* error;
+    size_t errorCapacity;
 
     bool atLineStart;
 
@@ -78,6 +80,7 @@ bool isFalsey(Value value);
 void runtimeError(VM* vm, const char* format, ...);
 void initvm(VM* vm);
 void freevm(VM* vm);
+void setError(VM* vm, const char* fmt, ...);
 
 InterpretOutput interpret(const char* source, VM* vm);
 
