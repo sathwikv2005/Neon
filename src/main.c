@@ -69,6 +69,7 @@ static void repl() {
 
             case INTERPRET_OK:
                 printValue(result.value);
+                printf("\n");
                 break;
         }
     }

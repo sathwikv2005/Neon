@@ -23,7 +23,10 @@ typedef enum {
 
     // database management
     OP_FLUSH,
-    OP_DBSIZE
+    OP_DBSIZE,
+
+    // VM management
+    OP_RETURN
 
 } OpCode;
 

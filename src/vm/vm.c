@@ -70,6 +70,8 @@ static InterpretOutput run(VM* vm) {
 #endif
         uint8_t instruction;
         switch (instruction = READ_BYTE()) {
+            case OP_RETURN:
+                return INTERPRET_RESULT(NULL_VAL);
             default:
                 break;
         }

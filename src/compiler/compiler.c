@@ -78,7 +78,7 @@ bool compile(VM* vm, const char* source, Chunk* chunk) {
         command(&compiler);
     }
     if (parser.hadError) return false;
-
+    emitByte(&compiler, OP_RETURN);
 #ifdef NEON_DEBUG
     if (!parser.hadError) disassembleChunk(chunk, "<script>");
 #endif
