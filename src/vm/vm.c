@@ -4,10 +4,14 @@
 #include "debug.h"
 #include "vm_common.h"
 
-#define ERROR_STATUS(status) \
-    (InterpretOutput) { status, NULL_VAL }
+// return ok back to the engine
+#define INTERPRET_OK() ((InterpretOutput){INTERPRET_OK, false, NULL_VAL})
 
-#define INTERPRET_RESULT(value) ((InterpretOutput){INTERPRET_OK, value})
+// return ok with a result back to the engine
+#define INTERPRET_RESULT(v) ((InterpretOutput){INTERPRET_OK, true, (v)})
+
+// report an error back to the engine
+#define ERROR_STATUS(s) ((InterpretOutput){(s), false, NULL_VAL})
 
 void initvm(VM* vm) {
     resetStack(vm);
@@ -70,8 +74,24 @@ static InterpretOutput run(VM* vm) {
 #endif
         uint8_t instruction;
         switch (instruction = READ_BYTE()) {
+            case OP_SET: {
+                ObjString* key = READ_STRING();
+                Value value = READ_CONSTANT();
+                tableSet(&vm->database->table, key, value);
+                return INTERPRET_OK();
+            }
+
+            case OP_GET: {
+                ObjString* key = READ_STRING();
+                Value value;
+                if (!tableGet(&vm->database->table, key, &value)) {
+                    return INTERPRET_RESULT(NULL_VAL);
+                }
+                return INTERPRET_RESULT(value);
+            }
+
             case OP_RETURN:
-                return INTERPRET_RESULT(NULL_VAL);
+                return INTERPRET_OK();
             default:
                 break;
         }

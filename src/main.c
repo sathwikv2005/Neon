@@ -68,6 +68,10 @@ static void repl() {
                 return;
 
             case INTERPRET_OK:
+                if (!result.hasValue) {
+                    printf("OK\n");
+                    break;
+                }
                 printValue(result.value);
                 printf("\n");
                 break;

@@ -49,6 +49,7 @@ typedef enum {
 
 typedef struct {
     InterpretResult status;
+    bool hasValue;
     Value value;
 } InterpretOutput;
 
