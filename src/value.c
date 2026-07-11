@@ -100,9 +100,6 @@ ObjString* valueTypeName(Value value) {
     }
 #else
     switch (value.type) {
-        case VAL_BOOL:
-            return copyString("bool", 4);
-
         case VAL_NULL:
             return copyString("null", 4);
 
