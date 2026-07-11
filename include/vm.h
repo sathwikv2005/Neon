@@ -6,6 +6,7 @@
 #include "chunk.h"
 #include "common.h"
 #include "object.h"
+#include "server.h"
 #include "table.h"
 #include "value.h"
 
@@ -52,6 +53,8 @@ typedef struct {
 } InterpretOutput;
 
 typedef struct VM {
+    Database* database;
+
     Value stack[STACK_MAX];
     const Chunk* chunk;
 

@@ -7,7 +7,6 @@
 
 typedef struct {
     VM vm;
-    Database* database;
 } Engine;
 
 Engine* createEngine();
