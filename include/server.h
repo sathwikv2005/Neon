@@ -4,7 +4,11 @@
 #include "table.h"
 
 typedef struct {
-    Table database;
+    Table table;
+} Database;
+
+typedef struct {
+    Database database;
     Table strings;
 } Server;
 

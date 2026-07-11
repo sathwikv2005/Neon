@@ -7,6 +7,7 @@ Engine* createEngine() {
     if (engine == NULL) return NULL;
 
     initvm(&engine->vm);
+    engine->database = &server.database;
     return engine;
 }
 
