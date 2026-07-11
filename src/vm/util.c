@@ -60,8 +60,8 @@ Value pop(VM* vm) {
 bool isFalsey(Value value) { return IS_NULL(value); }
 
 void concatenate(VM* vm) {
-    ObjString* b = AS_STRING(valueToString(peek(vm, 0)));
-    ObjString* a = AS_STRING(valueToString(peek(vm, 1)));
+    ObjString* b = AS_STRING(valueToString(vm, peek(vm, 0)));
+    ObjString* a = AS_STRING(valueToString(vm, peek(vm, 1)));
 
     int length = a->length + b->length;
     char* chars = ALLOCATE(char, length + 1);
@@ -69,7 +69,7 @@ void concatenate(VM* vm) {
     memcpy(chars + a->length, b->chars, b->length);
     chars[length] = '\0';
 
-    ObjString* result = takeString(chars, length);
+    ObjString* result = takeString(vm, chars, length);
     pop(vm);
     pop(vm);
     push(vm, OBJ_VAL(result));

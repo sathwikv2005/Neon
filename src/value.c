@@ -32,7 +32,7 @@ void writeValueArray(ValueArray* array, Value value) {
 }
 
 void freeValueArray(ValueArray* array) {
-    FREE_ARRAY(Value, array->values, array->count);
+    FREE_ARRAY(Value, array->values);
     initValueArray(array);
 }
 
@@ -85,31 +85,31 @@ bool valuesEqual(Value a, Value b) {
 #endif
 }
 
-ObjString* valueTypeName(Value value) {
+ObjString* valueTypeName(VM* vm, Value value) {
 #ifdef NAN_BOXING
     if (IS_NULL(value)) {
-        return copyString("null", 4);
+        return copyString(vm, "null", 4);
     }
 
     if (IS_NUMBER(value)) {
-        return copyString("number", 6);
+        return copyString(vm, "number", 6);
     }
 
     if (IS_OBJ(value)) {
-        return objTypeName(value);
+        return objTypeName(vm, value);
     }
 #else
     switch (value.type) {
         case VAL_NULL:
-            return copyString("null", 4);
+            return copyString(vm, "null", 4);
 
         case VAL_NUMBER:
-            return copyString("number", 6);
+            return copyString(vm, "number", 6);
 
         case VAL_OBJ:
-            return objType(value);
+            return objTypeName(vm, value);
     }
 #endif
 
-    return copyString("unknown type", 12);
+    return copyString(vm, "unknown type", 12);
 }

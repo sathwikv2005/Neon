@@ -19,7 +19,7 @@ void initTable(Table* table) {
 }
 
 void freeTable(Table* table) {
-    FREE_ARRAY(Entry, table->entries, table->capacity);
+    FREE_ARRAY(Entry, table->entries);
     initTable(table);
 }
 
@@ -75,7 +75,7 @@ static void adjustCapacity(Table* table, int capacity) {
         table->count++;
         table->size++;
     }
-    FREE_ARRAY(Entry, table->entries, table->capacity);
+    FREE_ARRAY(Entry, table->entries);
     table->entries = entries;
     table->capacity = capacity;
     table->mask = mask;

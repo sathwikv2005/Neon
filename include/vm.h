@@ -63,6 +63,15 @@ typedef struct VM {
 
     uint8_t* ip;
 
+    // gc
+    size_t bytesAllocated;
+    Obj* objects;
+    // size_t nextGC;
+    // int grayCount;
+    // int grayCapacity;
+    // Obj** grayStack;
+    // bool currentGCMark;
+
     int exitCode;
     jmp_buf vmJmp;
     char* error;

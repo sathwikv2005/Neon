@@ -6,7 +6,7 @@ Chunk* currentChunk(Compiler* compiler) { return compiler->chunk; }
 
 void parseKey(Compiler* compiler, const char* message) {
     consume(compiler, TOKEN_STRING, message);
-    ObjString* key = copyString(compiler->parser->previous.start,
+    ObjString* key = copyString(compiler->vm, compiler->parser->previous.start,
                                 compiler->parser->previous.length);
 
     uint8_t constant = makeConstant(compiler, OBJ_VAL(key));
@@ -17,8 +17,9 @@ void parseValue(Compiler* compiler, const char* message) {
     uint8_t constant = 0;
     switch (compiler->parser->current.type) {
         case TOKEN_STRING: {
-            ObjString* value = copyString(compiler->parser->current.start,
-                                          compiler->parser->current.length);
+            ObjString* value =
+                copyString(compiler->vm, compiler->parser->current.start,
+                           compiler->parser->current.length);
 
             constant = makeConstant(compiler, OBJ_VAL(value));
             break;

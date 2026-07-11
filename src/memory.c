@@ -4,8 +4,8 @@
 #include "server.h"
 #include "stdlib.h"
 
-void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
-    server.bytesAllocated += newSize - oldSize;
+void* reallocate(VM* vm, void* pointer, size_t oldSize, size_t newSize) {
+    vm->bytesAllocated += newSize - oldSize;
 
     // #ifdef NEON_DEBUG
     //     if (newSize > oldSize) {
@@ -72,7 +72,7 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
 //     }
 // }
 
-static void freeObject(Obj* object) {
+static void freeObject(VM* vm, Obj* object) {
 #ifdef HELIUM_DEBUG
     if (GET_DEBUG_LOG_GC())
         printf("%p free type %d\n", (void*)object, object->type);
@@ -80,18 +80,18 @@ static void freeObject(Obj* object) {
     switch (object->type) {
         case OBJ_STRING: {
             ObjString* string = (ObjString*)object;
-            FREE_ARRAY(char, string->chars, string->length + 1);
-            FREE(ObjString, object);
+            VM_FREE_ARRAY(vm, char, string->chars, string->length + 1);
+            VM_FREE(vm, ObjString, object);
             break;
         }
     }
 }
 
-void freeObjects() {
-    Obj* object = server.objects;
+void freeObjects(VM* vm) {
+    Obj* object = vm->objects;
     while (object != NULL) {
         Obj* next = object->next;
-        freeObject(object);
+        freeObject(vm, object);
         object = next;
     }
 

@@ -5,6 +5,7 @@
 
 #include "common.h"
 
+typedef struct VM VM;
 typedef struct Obj Obj;
 typedef struct ObjString ObjString;
 
@@ -107,6 +108,6 @@ void initValueArrayWithCapacity(ValueArray* array, int capacity);
 void writeValueArray(ValueArray* array, Value value);
 void freeValueArray(ValueArray* array);
 void printValue(Value value);
-ObjString* valueTypeName(Value value);
+ObjString* valueTypeName(VM* vm, Value value);
 
 #endif

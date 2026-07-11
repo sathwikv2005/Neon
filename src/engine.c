@@ -3,12 +3,14 @@
 #include "../include/memory.h"
 
 Engine* createEngine() {
-    Engine* engine = ALLOCATE(Engine, 1);
+    Engine* engine = malloc(sizeof(Engine));
+    if (engine == NULL) return NULL;
+
     initvm(&engine->vm);
     return engine;
 }
 
 void freeEngine(Engine* engine) {
     freevm(&engine->vm);
-    FREE(Engine, engine);
+    free(engine);
 }

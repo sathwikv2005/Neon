@@ -11,6 +11,6 @@ void initLineArray(LineArray* lines) {
 }
 
 void freeLineArray(LineArray* lines) {
-    FREE_ARRAY(LineRun, lines->runs, lines->capacity);
+    FREE_ARRAY(LineRun, lines->runs);
     initLineArray(lines);
 }

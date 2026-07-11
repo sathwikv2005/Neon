@@ -8,15 +8,15 @@
 #include "value.h"
 #include "vm.h"
 
-#define ALLOCATE_OBJ(type, objectType) \
-    (type*)allocateObject(sizeof(type), objectType)
+#define ALLOCATE_OBJ(vm, type, objectType) \
+    (type*)allocateObject(vm, sizeof(type), objectType)
 
-static Obj* allocateObject(size_t size, ObjType type) {
-    Obj* object = (Obj*)reallocate(NULL, 0, size);
+static Obj* allocateObject(VM* vm, size_t size, ObjType type) {
+    Obj* object = (Obj*)reallocate(vm, NULL, 0, size);
     object->type = type;
     // object->isMarked = !vm.currentGCMark;
-    object->next = server.objects;
-    server.objects = object;
+    object->next = vm->objects;
+    vm->objects = object;
 
     // #ifdef HELIUM_DEBUG
     //     if (GET_DEBUG_LOG_GC())
@@ -26,8 +26,9 @@ static Obj* allocateObject(size_t size, ObjType type) {
     return object;
 }
 
-static ObjString* allocateString(char* chars, int length, uint32_t hash) {
-    ObjString* string = ALLOCATE_OBJ(ObjString, OBJ_STRING);
+static ObjString* allocateString(VM* vm, char* chars, int length,
+                                 uint32_t hash) {
+    ObjString* string = ALLOCATE_OBJ(vm, ObjString, OBJ_STRING);
     string->length = length;
     string->chars = chars;
     string->hash = hash;
@@ -56,17 +57,17 @@ static uint32_t hashString(const char* key, int length) {
     This reduces duplicate allocations and allows string equality to be just a
     simple pointer comparison.
  */
-ObjString* takeString(char* chars, int length) {
+ObjString* takeString(VM* vm, char* chars, int length) {
     uint32_t hash = hashString(chars, length);
 
     ObjString* interned = tableFindString(&server.strings, chars, length, hash);
 
     if (interned != NULL) {
-        FREE_ARRAY(char, chars, length + 1);
+        VM_FREE_ARRAY(vm, char, chars, length + 1);
         return interned;
     }
 
-    return allocateString(chars, length, hash);
+    return allocateString(vm, chars, length, hash);
 }
 
 /*
@@ -75,7 +76,7 @@ ObjString* takeString(char* chars, int length) {
     This reduces duplicate allocations and allows string equality to be just a
     simple pointer comparison.
  */
-ObjString* copyString(const char* chars, int length) {
+ObjString* copyString(VM* vm, const char* chars, int length) {
     uint32_t hash = hashString(chars, length);
 
     ObjString* interned = tableFindString(&server.strings, chars, length, hash);
@@ -84,11 +85,11 @@ ObjString* copyString(const char* chars, int length) {
     char* heapChars = ALLOCATE(char, length + 1);
     memcpy(heapChars, chars, length);
     heapChars[length] = '\0';
-    return allocateString(heapChars, length, hash);
+    return allocateString(vm, heapChars, length, hash);
 }
 
-static Value stringValue(const char* chars) {
-    return OBJ_VAL(copyString(chars, (int)strlen(chars)));
+static Value stringValue(VM* vm, const char* chars) {
+    return OBJ_VAL(copyString(vm, chars, (int)strlen(chars)));
 }
 
 static void printString(char* str, bool withQuotes) {
@@ -110,26 +111,26 @@ void printObject(Value value) {
     }
 }
 
-ObjString* objTypeName(Value value) {
+ObjString* objTypeName(VM* vm, Value value) {
     switch (OBJ_TYPE(value)) {
         case OBJ_STRING:
-            return copyString("string", 6);
+            return copyString(vm, "string", 6);
     }
 
-    return copyString("unknown type", 12);
+    return copyString(vm, "unknown type", 12);
 }
 
-Value valueToString(Value value) {
+Value valueToString(VM* vm, Value value) {
     char buffer[32];
 
     if (IS_NULL(value)) {
-        return stringValue("null");
+        return stringValue(vm, "null");
     }
 
     if (IS_NUMBER(value)) {
         int length =
             snprintf(buffer, sizeof(buffer), "%.15g", AS_NUMBER(value));
-        return OBJ_VAL(copyString(buffer, length));
+        return OBJ_VAL(copyString(vm, buffer, length));
     }
 
     switch (OBJ_TYPE(value)) {
