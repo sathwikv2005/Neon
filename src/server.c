@@ -8,3 +8,9 @@ void initServer() {
     initTable(&server.strings);
     server.objects = NULL;
 }
+
+void freeServer(void) {
+    freeTable(&server.database.table);
+    freeTable(&server.strings);
+    freeObjects();
+}
