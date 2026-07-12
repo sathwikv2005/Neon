@@ -102,6 +102,8 @@ static Token number() {
 }
 
 static Token string(char quote) {
+    scanner.start++;  // skip opening quote
+
     while (peek() != quote && !isAtEnd()) {
         if (peek() == '\\') {
             advance();
@@ -114,8 +116,11 @@ static Token string(char quote) {
 
     if (isAtEnd()) return errorToken("Unterminated string.");
 
-    advance();
-    return makeToken(TOKEN_STRING);
+    Token token = makeToken(TOKEN_STRING);
+
+    advance();  // consume closing quote
+
+    return token;
 }
 
 static TokenType checkKeyword(int start, int length, const char* rest,
