@@ -4,8 +4,9 @@
 #include "server.h"
 #include "stdlib.h"
 
-void* reallocate(VM* vm, void* pointer, size_t oldSize, size_t newSize) {
-    vm->database->bytesAllocated += newSize - oldSize;
+void* reallocate(Database* database, void* pointer, size_t oldSize,
+                 size_t newSize) {
+    database->bytesAllocated += newSize - oldSize;
 
     // #ifdef NEON_DEBUG
     //     if (newSize > oldSize) {
@@ -72,7 +73,7 @@ void* reallocate(VM* vm, void* pointer, size_t oldSize, size_t newSize) {
 //     }
 // }
 
-static void freeObject(VM* vm, Obj* object) {
+static void freeObject(Database* database, Obj* object) {
 #ifdef HELIUM_DEBUG
     if (GET_DEBUG_LOG_GC())
         printf("%p free type %d\n", (void*)object, object->type);
@@ -80,18 +81,19 @@ static void freeObject(VM* vm, Obj* object) {
     switch (object->type) {
         case OBJ_STRING: {
             ObjString* string = (ObjString*)object;
-            VM_FREE_ARRAY(vm, char, string->chars, string->length + 1);
-            VM_FREE(vm, ObjString, object);
+            DATABASE_FREE_ARRAY(database, char, string->chars,
+                                string->length + 1);
+            DATABASE_FREE(database, ObjString, object);
             break;
         }
     }
 }
 
-void freeObjects(VM* vm) {
-    Obj* object = vm->objects;
+void freeObjects(Database* database) {
+    Obj* object = database->objects;
     while (object != NULL) {
         Obj* next = object->next;
-        freeObject(vm, object);
+        freeObject(database, object);
         object = next;
     }
 

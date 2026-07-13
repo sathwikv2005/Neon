@@ -16,7 +16,6 @@ static Obj* allocateObject(Database* database, size_t size, ObjType type) {
     object->type = type;
     // object->isMarked = !vm.currentGCMark;
 
-    // TODO objects should be owned by database not vm
     object->next = database->objects;
     database->objects = object;
 
@@ -65,7 +64,7 @@ ObjString* takeString(VM* vm, char* chars, int length) {
     ObjString* interned = tableFindString(&server.strings, chars, length, hash);
 
     if (interned != NULL) {
-        VM_FREE_ARRAY(vm, char, chars, length + 1);
+        DATABASE_FREE_ARRAY(vm->database, char, chars, length + 1);
         return interned;
     }
 

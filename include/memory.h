@@ -6,6 +6,8 @@
 #include "common.h"
 #include "object.h"
 
+typedef struct Database Database;
+
 #define GC_HEAP_GROW_FACTOR 2
 
 // Normal allocations (not tracked by the VM)
@@ -20,20 +22,22 @@
 
 #define FREE_ARRAY(type, pointer) free(pointer)
 
-// VM managed allocations
-#define VM_ALLOCATE(vm, type, count) \
-    ((type*)reallocate(vm, NULL, 0, sizeof(type) * (count)))
+// Database managed allocations
+#define DATABASE_ALLOCATE(database, type, count) \
+    ((type*)reallocate(database, NULL, 0, sizeof(type) * (count)))
 
-#define VM_FREE(vm, type, pointer) reallocate(vm, pointer, sizeof(type), 0)
+#define DATABASE_FREE(database, type, pointer) \
+    reallocate(database, pointer, sizeof(type), 0)
 
-#define VM_GROW_ARRAY(vm, type, pointer, oldCount, newCount)   \
-    ((type*)reallocate(vm, pointer, sizeof(type) * (oldCount), \
+#define DATABASE_GROW_ARRAY(database, type, pointer, oldCount, newCount) \
+    ((type*)reallocate(database, pointer, sizeof(type) * (oldCount),     \
                        sizeof(type) * (newCount)))
 
-#define VM_FREE_ARRAY(vm, type, pointer, oldCount) \
-    reallocate(vm, pointer, sizeof(type) * (oldCount), 0)
+#define DATABASE_FREE_ARRAY(database, type, pointer, oldCount) \
+    reallocate(database, pointer, sizeof(type) * (oldCount), 0)
 
-void* reallocate(VM* vm, void* pointer, size_t oldSize, size_t newSize);
-void freeObjects(VM* vm);
+void* reallocate(Database* database, void* pointer, size_t oldSize,
+                 size_t newSize);
+void freeObjects(Database* database);
 
 #endif

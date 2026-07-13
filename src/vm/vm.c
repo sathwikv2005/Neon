@@ -15,13 +15,13 @@
 
 void initvm(VM* vm) {
     resetStack(vm);
-    vm->objects = NULL;
+    // vm->objects = NULL;
     // vm->grayCount = 0;
     // vm->grayCapacity = 0;
     // vm->grayStack = NULL;
     vm->debugFlags = 0;
     vm->atLineStart = true;
-    vm->bytesAllocated = 0;
+    // vm->bytesAllocated = 0;
     // vm->nextGC = 1024 * 1024;
     // vm->currentGCMark = true;
     vm->ip = 0;
@@ -33,7 +33,6 @@ void freevm(VM* vm) {
     FREE_ARRAY(char, vm->error);
     vm->error = NULL;
     vm->errorCapacity = 0;
-    freeObjects(vm);
 }
 
 static InterpretOutput run(VM* vm) {

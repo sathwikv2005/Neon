@@ -2,10 +2,11 @@
 #define neon_server_h
 
 #include "table.h"
-typedef struct {
+typedef struct Database {
     Table table;
     Obj* objects;
     size_t bytesAllocated;
+    size_t clients;
 
 } Database;
 
