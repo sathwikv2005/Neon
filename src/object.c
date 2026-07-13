@@ -8,15 +8,17 @@
 #include "value.h"
 #include "vm.h"
 
-#define ALLOCATE_OBJ(vm, type, objectType) \
-    (type*)allocateObject(vm, sizeof(type), objectType)
+#define ALLOCATE_OBJ(database, type, objectType) \
+    (type*)allocateObject(database, sizeof(type), objectType)
 
-static Obj* allocateObject(VM* vm, size_t size, ObjType type) {
-    Obj* object = (Obj*)reallocate(vm, NULL, 0, size);
+static Obj* allocateObject(Database* database, size_t size, ObjType type) {
+    Obj* object = (Obj*)reallocate(database, NULL, 0, size);
     object->type = type;
     // object->isMarked = !vm.currentGCMark;
-    object->next = vm->objects;
-    vm->objects = object;
+
+    // TODO objects should be owned by database not vm
+    object->next = database->objects;
+    database->objects = object;
 
     // #ifdef HELIUM_DEBUG
     //     if (GET_DEBUG_LOG_GC())
@@ -28,16 +30,16 @@ static Obj* allocateObject(VM* vm, size_t size, ObjType type) {
 
 static ObjString* allocateString(VM* vm, char* chars, int length,
                                  uint32_t hash) {
-    ObjString* string = ALLOCATE_OBJ(vm, ObjString, OBJ_STRING);
+    ObjString* string = ALLOCATE_OBJ(vm->database, ObjString, OBJ_STRING);
     string->length = length;
     string->chars = chars;
     string->hash = hash;
 
-    // push(OBJ_VAL(string));
+    // push(vm, OBJ_VAL(string));
 
     tableSet(&server.strings, string, NULL_VAL);
 
-    // pop();
+    // pop(vm);
 
     return string;
 }
