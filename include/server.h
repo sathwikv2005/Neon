@@ -5,6 +5,8 @@
 typedef struct {
     Table table;
     Obj* objects;
+    size_t bytesAllocated;
+
 } Database;
 
 typedef struct {

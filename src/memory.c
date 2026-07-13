@@ -5,7 +5,7 @@
 #include "stdlib.h"
 
 void* reallocate(VM* vm, void* pointer, size_t oldSize, size_t newSize) {
-    vm->bytesAllocated += newSize - oldSize;
+    vm->database->bytesAllocated += newSize - oldSize;
 
     // #ifdef NEON_DEBUG
     //     if (newSize > oldSize) {
