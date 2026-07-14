@@ -4,9 +4,8 @@
 #include <stdlib.h>
 
 #include "common.h"
+#include "database.h"
 #include "object.h"
-
-typedef struct Database Database;
 
 #define GC_HEAP_GROW_FACTOR 2
 
