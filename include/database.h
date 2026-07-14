@@ -11,4 +11,9 @@ typedef struct Database {
 
 } Database;
 
+Database* loadDatabase(uint8_t id);
+void unloadDatabase(Database* db);
+bool saveDatabase(Database* db);
+bool syncDatabase(Database* db);
+
 #endif

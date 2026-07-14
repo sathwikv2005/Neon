@@ -7,8 +7,9 @@ Engine* createEngine() {
     if (engine == NULL) return NULL;
 
     initvm(&engine->vm);
-    engine->vm.database = &server.database;
-    engine->vm.database->clients += 1;
+    Database* database = loadDatabase(0);
+    engine->vm.database = database;
+    database->clients += 1;
     return engine;
 }
 

@@ -2,12 +2,6 @@
 
 Server server;
 
-void initServer() {
-    initTable(&server.database.table);
-    initTable(&server.strings);
-}
+void initServer() { initTable(&server.strings); }
 
-void freeServer(void) {
-    freeTable(&server.database.table);
-    freeTable(&server.strings);
-}
+void freeServer() { freeTable(&server.strings); }
