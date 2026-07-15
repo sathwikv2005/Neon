@@ -19,12 +19,20 @@ void initTable(Table* table) {
 }
 
 static void freeEntry(Entry* entry) {
+    if (entry->key == NULL) return;
     releaseString(entry->key);
     if (IS_OBJ(entry->value)) releaseObject(AS_OBJ(entry->value));
 }
 
+static void freeEntries(Table* table) {
+    Entry* entries = table->entries;
+    for (int i = 0; i < table->capacity; i++) {
+        freeEntry(&entries[i]);
+    }
+}
+
 void freeTable(Table* table) {
-    // TODO: release table entries
+    freeEntries(table);
     FREE_ARRAY(Entry, table->entries, table->capacity);
     initTable(table);
 }
