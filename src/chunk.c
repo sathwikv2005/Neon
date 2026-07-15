@@ -42,9 +42,24 @@ void writeChunk(Chunk* chunk, uint8_t byte, int line) {
     }
 }
 
+/*
+    objects other than strings only exist in the scope of that single command.
+    so they survive only if they make it to a table.
+*/
+static void freeConstants(ValueArray* constants) {
+    for (int i = 0; i < constants->count; i++) {
+        if (!IS_OBJ(constants->values[i])) continue;
+        Obj* obj = AS_OBJ(constants->values[i]);
+        if (!obj->survived) {
+            releaseObject(obj);
+        }
+    }
+}
+
 void freeChunk(Chunk* chunk) {
     FREE_ARRAY(uint8_t, chunk->code, chunk->capacity);
     freeLineArray(&chunk->lines);
+    freeConstants(&chunk->constants);
     freeValueArray(&chunk->constants);
     initChunk(chunk);
 }

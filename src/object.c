@@ -14,6 +14,7 @@
 static Obj* allocateObject(size_t size, ObjType type) {
     Obj* object = (Obj*)reallocate(NULL, 0, size);
     object->type = type;
+    object->survived = false;
     // object->isMarked = !vm.currentGCMark;
 
     // object->next = database->objects;
@@ -33,7 +34,7 @@ static ObjString* allocateString(VM* vm, char* chars, int length,
     string->length = length;
     string->chars = chars;
     string->hash = hash;
-    string->ref = 1;
+    string->ref = 0;
 
     // push(vm, OBJ_VAL(string));
 
@@ -66,7 +67,6 @@ ObjString* takeString(VM* vm, char* chars, int length) {
 
     if (interned != NULL) {
         FREE_ARRAY(char, chars, length + 1);
-        interned->ref++;
         return interned;
     }
 
@@ -84,7 +84,6 @@ ObjString* copyString(VM* vm, const char* chars, int length) {
 
     ObjString* interned = tableFindString(&server.strings, chars, length, hash);
     if (interned != NULL) {
-        interned->ref++;
         return interned;
     }
 

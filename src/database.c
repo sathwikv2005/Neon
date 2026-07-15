@@ -8,10 +8,7 @@ static void initDatabase(Database* database) {
     database->clients = 0;
 }
 
-static void freeDatabase(Database* database) {
-    freeTable(&database->table);
-    freeObjects(database);
-}
+static void freeDatabase(Database* database) { freeTable(&database->table); }
 
 // load database from save/checkpoint onto memory
 Database* loadDatabase(uint8_t id) {

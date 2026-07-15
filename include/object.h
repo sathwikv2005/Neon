@@ -15,7 +15,7 @@ typedef enum { OBJ_STRING } ObjType;
 
 struct Obj {
     ObjType type;
-    bool isMarked;
+    bool survived;
     Obj* next;
 };
 

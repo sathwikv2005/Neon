@@ -72,6 +72,42 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
 //     }
 // }
 
+void retainObject(Obj* obj) {
+    obj->survived = true;
+    switch (obj->type) {
+        case OBJ_STRING:
+            retainString((ObjString*)obj);
+            break;
+
+        default:
+            break;
+    }
+}
+
+void releaseObject(Obj* obj) {
+    switch (obj->type) {
+        case OBJ_STRING:
+            releaseString((ObjString*)obj);
+            break;
+
+        default:
+            freeObject(obj);
+    }
+}
+
+void retainString(ObjString* string) {
+    ((Obj*)string)->survived = true;
+    string->ref++;
+}
+
+void releaseString(ObjString* string) {
+    // if the strings only reference is in the interned table, free it.
+    if (--string->ref == 1) {
+        tableRemove(&server.strings, string);
+        freeObject((Obj*)string);
+    }
+}
+
 void freeObject(Obj* object) {
 #ifdef HELIUM_DEBUG
     if (GET_DEBUG_LOG_GC())
@@ -80,11 +116,8 @@ void freeObject(Obj* object) {
     switch (object->type) {
         case OBJ_STRING: {
             ObjString* string = (ObjString*)object;
-            if (--string->ref == 0) {
-                tableDelete(&server.strings, string);
-                FREE_ARRAY(char, string->chars, string->length + 1);
-                FREE(ObjString, object);
-            }
+            FREE_ARRAY(char, string->chars, string->length + 1);
+            FREE(ObjString, object);
             break;
         }
     }

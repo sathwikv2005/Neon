@@ -18,7 +18,13 @@ void initTable(Table* table) {
     table->mask = 0;
 }
 
+static void freeEntry(Entry* entry) {
+    releaseString(entry->key);
+    if (IS_OBJ(entry->value)) releaseObject(AS_OBJ(entry->value));
+}
+
 void freeTable(Table* table) {
+    // TODO: release table entries
     FREE_ARRAY(Entry, table->entries, table->capacity);
     initTable(table);
 }
@@ -92,14 +98,16 @@ bool tableSet(Table* table, ObjString* key, Value value) {
     bool isNewKey = entry->key == NULL;
     if (isNewKey) {
         table->size++;
-
+        retainString(key);
         if (IS_NULL(entry->value)) {
             table->count++;
         }
     }
+    if (!isNewKey && IS_OBJ(entry->value)) releaseObject(AS_OBJ(entry->value));
 
     entry->key = key;
     entry->value = value;
+    if (IS_OBJ(value)) retainObject(AS_OBJ(value));
 
     return isNewKey;
 }
@@ -131,10 +139,24 @@ ObjString* tableFindString(Table* table, const char* chars, int length,
     }
 }
 
+/*
+    clears an entry from the table but does not free memory
+*/
+bool tableRemove(Table* table, ObjString* key) {
+    Entry* entry = findEntry(table->entries, table->mask, key);
+    if (entry->key == NULL) return false;
+    table->size--;
+    entry->key = NULL;
+    entry->value = NULL_VAL;
+    return true;
+}
+
 bool tableDelete(Table* table, ObjString* key) {
     if (table->count == 0) return false;
     Entry* entry = findEntry(table->entries, table->mask, key);
     if (entry->key == NULL) return false;
+
+    freeEntry(entry);
 
     table->size--;
     entry->key = NULL;

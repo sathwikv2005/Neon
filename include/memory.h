@@ -26,7 +26,11 @@
     reallocate(pointer, sizeof(type) * (oldCount), 0)
 
 void* reallocate(void* pointer, size_t oldSize, size_t newSize);
-void freeObject(Obj* object)
+void freeObject(Obj* object);
+void retainString(ObjString* string);
+void releaseString(ObjString* string);
+void releaseObject(Obj* obj);
+void retainObject(Obj* obj);
 // void freeObjects(Database* database);
 
 #endif
