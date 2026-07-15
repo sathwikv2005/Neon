@@ -23,6 +23,7 @@ struct ObjString {
     Obj obj;
     int length;
     char* chars;
+    size_t ref;
     uint32_t hash;
 };
 

@@ -33,6 +33,7 @@ static ObjString* allocateString(VM* vm, char* chars, int length,
     string->length = length;
     string->chars = chars;
     string->hash = hash;
+    string->ref = 1;
 
     // push(vm, OBJ_VAL(string));
 
@@ -65,6 +66,7 @@ ObjString* takeString(VM* vm, char* chars, int length) {
 
     if (interned != NULL) {
         FREE_ARRAY(char, chars, length + 1);
+        interned->ref++;
         return interned;
     }
 
@@ -81,7 +83,10 @@ ObjString* copyString(VM* vm, const char* chars, int length) {
     uint32_t hash = hashString(chars, length);
 
     ObjString* interned = tableFindString(&server.strings, chars, length, hash);
-    if (interned != NULL) return interned;
+    if (interned != NULL) {
+        interned->ref++;
+        return interned;
+    }
 
     char* heapChars = ALLOCATE(char, length + 1);
     memcpy(heapChars, chars, length);

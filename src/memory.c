@@ -72,7 +72,7 @@ void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
 //     }
 // }
 
-static void freeObject(Obj* object) {
+void freeObject(Obj* object) {
 #ifdef HELIUM_DEBUG
     if (GET_DEBUG_LOG_GC())
         printf("%p free type %d\n", (void*)object, object->type);
@@ -80,8 +80,11 @@ static void freeObject(Obj* object) {
     switch (object->type) {
         case OBJ_STRING: {
             ObjString* string = (ObjString*)object;
-            FREE_ARRAY(char, string->chars, string->length + 1);
-            FREE(ObjString, object);
+            if (--string->ref == 0) {
+                tableDelete(&server.strings, string);
+                FREE_ARRAY(char, string->chars, string->length + 1);
+                FREE(ObjString, object);
+            }
             break;
         }
     }
