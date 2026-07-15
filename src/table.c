@@ -42,9 +42,9 @@ static Entry* findEntry(Entry* entries, int mask, ObjString* key) {
         if (entry->key == NULL) {
             if (IS_NULL(entry->value)) {
                 return tombstone != NULL ? tombstone : entry;
-            } else {
-                if (tombstone == NULL) tombstone = entry;
             }
+
+            if (tombstone == NULL) tombstone = entry;
         } else if (entry->key == key) {
             return entry;
         }
@@ -89,8 +89,10 @@ static void adjustCapacity(Table* table, int capacity) {
 
 bool tableSet(Table* table, ObjString* key, Value value) {
     if (table->count + 1 > table->capacity * TABLE_MAX_LOAD) {
-        int capacity = GROW_CAPACITY(table->capacity);
-        adjustCapacity(table, capacity);
+        if (table->size < table->capacity / 2)
+            adjustCapacity(table, table->capacity);  // clear tombstones
+        else
+            adjustCapacity(table, GROW_CAPACITY(table->capacity));
     }
 
     Entry* entry = findEntry(table->entries, table->mask, key);
@@ -131,6 +133,7 @@ ObjString* tableFindString(Table* table, const char* chars, int length,
         Entry* entry = &table->entries[index];
         if (entry->key == NULL) {
             if (IS_NULL(entry->value)) return NULL;
+            // tombstone, continue probing
         } else if (entry->key->length == length && entry->key->hash == hash &&
                    memcmp(entry->key->chars, chars, length) == 0) {
             return entry->key;
@@ -143,11 +146,13 @@ ObjString* tableFindString(Table* table, const char* chars, int length,
     clears an entry from the table but does not free memory
 */
 bool tableRemove(Table* table, ObjString* key) {
+    if (table->count == 0) return false;
     Entry* entry = findEntry(table->entries, table->mask, key);
     if (entry->key == NULL) return false;
+
     table->size--;
     entry->key = NULL;
-    entry->value = NULL_VAL;
+    entry->value = TOMBSTONE_VAL;
     return true;
 }
 
@@ -160,7 +165,7 @@ bool tableDelete(Table* table, ObjString* key) {
 
     table->size--;
     entry->key = NULL;
-    entry->value = NULL_VAL;
+    entry->value = TOMBSTONE_VAL;
 
     return true;
 }

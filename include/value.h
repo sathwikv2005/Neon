@@ -33,7 +33,8 @@ typedef enum { VAL_NULL, VAL_NUMBER, VAL_OBJ } ValueType;
 #define QNAN ((uint64_t)0x7ffc000000000000)
 
 // right most 2 bits of Value, to represent NULL
-#define TAG_NULL 1  // 01
+#define TAG_NULL 1       // 01
+#define TAG_TOMBSTONE 2  // 10
 
 typedef uint64_t Value;
 
@@ -52,6 +53,11 @@ typedef uint64_t Value;
 
 #define AS_NUMBER(value) valueToNum(value)
 #define AS_OBJ(value) ((Obj*)(uintptr_t)((value) & ~(SIGN_BIT | QNAN)))
+
+// a special value for the hash table
+#define TOMBSTONE_VAL ((Value)(QNAN | TAG_TOMBSTONE))
+
+#define IS_TOMBSTONE(v) ((v) == TOMBSTONE_VAL)
 
 static inline double valueToNum(Value value) {
     /*
