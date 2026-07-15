@@ -6,18 +6,11 @@
 static void initDatabase(Database* database) {
     initTable(&database->table);
     database->clients = 0;
-    database->bytesAllocated = 0;
-    database->objects = NULL;
 }
 
 static void freeDatabase(Database* database) {
     freeTable(&database->table);
     freeObjects(database);
-}
-
-// returns the total bytes allocated for the database objects
-size_t getBytesAllocated(Database* database) {
-    return database->bytesAllocated;
 }
 
 // load database from save/checkpoint onto memory

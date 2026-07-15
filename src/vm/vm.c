@@ -30,7 +30,7 @@ void initvm(VM* vm) {
 }
 
 void freevm(VM* vm) {
-    FREE_ARRAY(char, vm->error);
+    FREE_ARRAY(char, vm->error, vm->errorCapacity);
     vm->error = NULL;
     vm->errorCapacity = 0;
 }

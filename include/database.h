@@ -5,8 +5,8 @@
 
 typedef struct Database {
     Table table;
-    Obj* objects;
-    size_t bytesAllocated;
+    // Obj* objects;
+    // size_t bytesAllocated;
     size_t clients;
 
 } Database;

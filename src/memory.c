@@ -4,9 +4,8 @@
 #include "server.h"
 #include "stdlib.h"
 
-void* reallocate(Database* database, void* pointer, size_t oldSize,
-                 size_t newSize) {
-    database->bytesAllocated += newSize - oldSize;
+void* reallocate(void* pointer, size_t oldSize, size_t newSize) {
+    // database->bytesAllocated += newSize - oldSize;
 
     // #ifdef NEON_DEBUG
     //     if (newSize > oldSize) {
@@ -73,7 +72,7 @@ void* reallocate(Database* database, void* pointer, size_t oldSize,
 //     }
 // }
 
-static void freeObject(Database* database, Obj* object) {
+static void freeObject(Obj* object) {
 #ifdef HELIUM_DEBUG
     if (GET_DEBUG_LOG_GC())
         printf("%p free type %d\n", (void*)object, object->type);
@@ -81,24 +80,23 @@ static void freeObject(Database* database, Obj* object) {
     switch (object->type) {
         case OBJ_STRING: {
             ObjString* string = (ObjString*)object;
-            DATABASE_FREE_ARRAY(database, char, string->chars,
-                                string->length + 1);
-            DATABASE_FREE(database, ObjString, object);
+            FREE_ARRAY(char, string->chars, string->length + 1);
+            FREE(ObjString, object);
             break;
         }
     }
 }
 
-void freeObjects(Database* database) {
-    Obj* object = database->objects;
-    while (object != NULL) {
-        Obj* next = object->next;
-        freeObject(database, object);
-        object = next;
-    }
+// void freeObjects(Database* database) {
+//     Obj* object = database->objects;
+//     while (object != NULL) {
+//         Obj* next = object->next;
+//         freeObject(object);
+//         object = next;
+//     }
 
-    // free(server.grayStack);
-}
+//     // free(server.grayStack);
+// }
 
 // /*
 //     Mark all GC roots.
