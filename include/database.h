@@ -4,10 +4,12 @@
 #include "table.h"
 
 typedef struct Database {
-    Table table;
-    // Obj* objects;
-    // size_t bytesAllocated;
+    // Database state
+    bool loaded;
+    uint8_t id;
     size_t clients;
+
+    Table table;
 
 } Database;
 

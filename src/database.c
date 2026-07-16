@@ -6,21 +6,26 @@
 static void initDatabase(Database* database) {
     initTable(&database->table);
     database->clients = 0;
+    database->loaded = true;
 }
 
-static void freeDatabase(Database* database) { freeTable(&database->table); }
+static void freeDatabase(Database* database) {
+    freeTable(&database->table);
+    database->clients = 0;
+    database->loaded = false;
+}
 
 // load database from save/checkpoint onto memory
 Database* loadDatabase(uint8_t id) {
-    // TODO: load database from save/checkpoint onto memory
-    // TODO: implement multiple databases
+    if (id >= MAX_DATABASE) return NULL;
 
-    // TODO: this reinitializes db for every client that loads the same db.
-    // TODO: need to keep trak on initialized dbs in Server.
-    // if(server[id]) return server.databases[id];
-    // server[id] = true;
-    initDatabase(&server.database);
-    return &server.database;
+    if (server.database[id].loaded) return &server.database[id];
+    initDatabase(&server.database[id]);
+
+    // TODO: load database from save/checkpoint onto memory
+
+    server.database[id].id = id;
+    return &server.database[id];
 }
 
 // if no active clients, save database and free the database from memory

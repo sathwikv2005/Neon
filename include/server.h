@@ -4,8 +4,10 @@
 #include "database.h"
 #include "table.h"
 
+#define MAX_DATABASE 8
+
 typedef struct {
-    Database database;
+    Database database[MAX_DATABASE];
     Table strings;
 } Server;
 
