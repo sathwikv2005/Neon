@@ -1,6 +1,7 @@
 #include "database.h"
 
 #include "../include/memory.h"
+#include "file.h"
 #include "server.h"
 
 static void initDatabase(Database* database) {
