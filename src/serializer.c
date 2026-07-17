@@ -32,10 +32,16 @@ static bool readU64(File* file, uint64_t* value) {
     return fileRead(file, value, sizeof(*value)) == sizeof(*value);
 }
 
+static bool writeBytes(File* file, const void* data, size_t size) {
+    return fileWrite(file, data, size) == size;
+}
+
+static bool readBytes(File* file, void* data, size_t size) {
+    return fileRead(file, data, size) == size;
+}
+
 static bool writeMagic(File* file) {
-    if (fileWrite(file, SERIALIZER_MAGIC, SERIALIZER_MAGIC_LEN) !=
-        SERIALIZER_MAGIC_LEN)
-        return false;
+    if (!writeBytes(file, SERIALIZER_MAGIC, SERIALIZER_MAGIC_LEN)) return false;
 
     uint8_t version = SERIALIZER_VERSION;
     return writeU8(file, version);
