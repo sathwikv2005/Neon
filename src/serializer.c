@@ -62,9 +62,9 @@ static bool readMagic(File* file) {
     return version == SERIALIZER_VERSION;
 }
 
-static bool writeCapacity(File* file, int capacity) {
+static bool writeSize(File* file, int size) {
     // the serializer expects 4 bytes. size of int is not guaranteed
-    uint32_t value = (uint32_t)capacity;
+    uint32_t value = (uint32_t)size;
 
     return writeU32(file, value);
 }
@@ -104,7 +104,7 @@ bool writeTable(File* file, Table* table) {
     if (!writeMagic(file)) {
         return false;
     }
-    if (!writeCapacity(file, table->capacity)) {
+    if (!writeSize(file, table->size)) {
         return false;
     }
     for (int i = 0; i < table->capacity; i++) {
