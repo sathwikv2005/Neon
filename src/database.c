@@ -55,3 +55,9 @@ bool syncDatabase(Database* database) {
 
     return false;  // unimplemented
 }
+
+bool readDatabase(Database* database) {
+    // TODO: read the saved database file
+
+    return false;  // unimplemented
+}

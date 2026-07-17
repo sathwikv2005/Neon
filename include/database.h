@@ -17,5 +17,6 @@ Database* loadDatabase(uint8_t id);
 bool unloadDatabase(Database* db);
 bool saveDatabase(Database* db);
 bool syncDatabase(Database* db);
+bool readDatabase(Database* database);
 
 #endif
