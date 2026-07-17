@@ -30,10 +30,16 @@ Database* loadDatabase(uint8_t id) {
 }
 
 // if no active clients, save database and free the database from memory
-void unloadDatabase(Database* database) {
+bool unloadDatabase(Database* database) {
     if (database->clients > 0) return;
-    // TODO: if no active clients, save the database onto a file
+
+    if (!saveDatabase(database)) {
+        return false;
+    }
+
     freeDatabase(database);
+
+    return true;
 }
 
 // write a complete snapshot of the database to disk.
