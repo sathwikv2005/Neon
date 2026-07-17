@@ -1,5 +1,7 @@
 #include "serializer.h"
 
+#include "object.h"
+
 static bool writeU8(File* file, uint8_t value) {
     return fileWrite(file, &value, sizeof(value)) == sizeof(value);
 }
@@ -69,6 +71,14 @@ static bool writeSize(File* file, int size) {
     return writeU32(file, value);
 }
 
+static bool writeString(File* file, ObjString* string) {
+    uint32_t len = (uint32_t)(string->length);
+    if (!writeU32(file, len)) {
+        return false;
+    }
+    return writeBytes(file, string->chars, len);
+}
+
 bool writeValue(File* file, Value value) {
     // TODO
     return false;  // unimplemented
@@ -79,10 +89,7 @@ bool readValue(File* file, Value* value) {
     return false;  // unimplemented
 }
 
-bool writeKey(File* file, ObjString* key) {
-    // TODO
-    return false;  // unimplemented
-}
+bool writeKey(File* file, ObjString* key) { return writeString(file, key); }
 
 bool readKey(File* file, ObjString** key) {
     // TODO
