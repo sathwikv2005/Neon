@@ -84,8 +84,9 @@ bool readKey(File* file, ObjString** key) {
 }
 
 bool writeEntry(File* file, Entry* entry) {
-    // TODO
-    return false;  // unimplemented
+    if (entry->key == NULL) return false;
+
+    return writeKey(file, entry->key) && writeValue(file, entry->value);
 }
 
 bool readEntry(File* file, Entry* entry) {
