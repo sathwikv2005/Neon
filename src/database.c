@@ -31,7 +31,7 @@ Database* loadDatabase(uint8_t id) {
 
 // if no active clients, save database and free the database from memory
 bool unloadDatabase(Database* database) {
-    if (database->clients > 0) return;
+    if (database->clients > 0) return false;
 
     if (!saveDatabase(database)) {
         return false;
