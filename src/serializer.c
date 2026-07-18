@@ -130,8 +130,20 @@ bool writeValue(File* file, Value value) {
 }
 
 bool readValue(File* file, Value* value) {
-    // TODO
-    return false;  // unimplemented
+    uint8_t tag;
+    if (!readU8(file, &tag)) return false;
+
+    switch (tag) {
+        case VAL_NULL:
+        case VAL_NUMBER:
+            return readU64(file, value);
+        case VAL_OBJ:
+            return readObj(file, value);
+        default:
+            break;
+    }
+
+    return false;
 }
 
 bool writeKey(File* file, ObjString* key) { return writeString(file, key); }
