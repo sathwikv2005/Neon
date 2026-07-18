@@ -33,6 +33,7 @@ typedef enum {
     TOKEN_STRING,
 
     // Special
+    TOKEN_EXIT,
     TOKEN_EOF,
     TOKEN_ERROR
 

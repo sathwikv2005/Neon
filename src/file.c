@@ -1,5 +1,19 @@
 #include "file.h"
 
+#include <errno.h>
+#include <string.h>
+
+#ifdef _WIN32
+#include <direct.h>
+#define PATH_SEP '\\'
+#define MKDIR(path) _mkdir(path)
+#else
+#include <sys/stat.h>
+#include <sys/types.h>
+#define PATH_SEP '/'
+#define MKDIR(path) mkdir(path, 0755)
+#endif
+
 static const char* fileModeString(FileMode mode) {
     switch (mode) {
         case FILE_READ:
@@ -19,9 +33,37 @@ static const char* fileModeString(FileMode mode) {
     return NULL;
 }
 
+static bool createDirectories(const char* path) {
+    char temp[1024];
+    size_t len = strlen(path);
+
+    if (len >= sizeof(temp)) return false;
+
+    strcpy(temp, path);
+
+    for (char* p = temp + 1; *p; p++) {
+        if (*p == '/' || *p == '\\') {
+            char c = *p;
+            *p = '\0';
+
+            if (strlen(temp) > 0) {
+                if (MKDIR(temp) != 0 && errno != EEXIST) return false;
+            }
+
+            *p = c;
+        }
+    }
+
+    return true;
+}
+
 bool fileOpen(File* file, const char* path, FileMode mode) {
     const char* modeString = fileModeString(mode);
     if (modeString == NULL) return false;
+
+    if (mode != FILE_READ) {
+        if (!createDirectories(path)) return false;
+    }
 
     file->handle = fopen(path, modeString);
     return file->handle != NULL;

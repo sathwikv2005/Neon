@@ -46,7 +46,10 @@ static void command(Compiler* compiler) {
         case TOKEN_SET:
             setCommand(compiler);
             break;
-
+        case TOKEN_EXIT: {
+            emitByte(compiler, OP_EXIT);
+            break;
+        }
         default:
             error(compiler, "unexpected command");
             break;

@@ -2,6 +2,7 @@
 
 #include "../include/memory.h"
 #include "file.h"
+#include "serializer.h"
 #include "server.h"
 
 static void initDatabase(Database* database) {
@@ -16,6 +17,10 @@ static void freeDatabase(Database* database) {
     database->loaded = false;
 }
 
+static void getSnapShotPath(char* path, size_t size, uint8_t id) {
+    snprintf(path, size, "./db/%u/snapshot.ne", (unsigned)id);
+}
+
 // load database from save/checkpoint onto memory
 Database* loadDatabase(uint8_t id) {
     if (id >= MAX_DATABASE) return NULL;
@@ -23,19 +28,18 @@ Database* loadDatabase(uint8_t id) {
     if (server.database[id].loaded) return &server.database[id];
     initDatabase(&server.database[id]);
 
-    // TODO: load database from save/checkpoint onto memory
+    readDatabase(&server.database[id]);
 
     server.database[id].id = id;
     return &server.database[id];
 }
 
-// if no active clients, save database and free the database from memory
+// save database and if no active clients, free the database from memory
 bool unloadDatabase(Database* database) {
-    if (database->clients > 0) return false;
-
     if (!saveDatabase(database)) {
         return false;
     }
+    if (database->clients > 0) return false;
 
     freeDatabase(database);
 
@@ -44,9 +48,19 @@ bool unloadDatabase(Database* database) {
 
 // write a complete snapshot of the database to disk.
 bool saveDatabase(Database* database) {
-    // TODO: write a complete snapshot of the database to disk.
+    char path[64];
+    getSnapShotPath(path, sizeof(path), database->id);
 
-    return false;  // unimplemented
+    File file;
+    if (!fileOpen(&file, path, FILE_WRITE)) return false;
+
+    if (!writeTable(&file, &database->table)) {
+        fileClose(&file);
+        return false;
+    }
+
+    fileClose(&file);
+    return true;
 }
 
 // sync pending in memory changes with the database file on disk
@@ -57,7 +71,16 @@ bool syncDatabase(Database* database) {
 }
 
 bool readDatabase(Database* database) {
-    // TODO: read the saved database file
+    char path[64];
+    getSnapShotPath(path, sizeof(path), database->id);
+    File file;
+    if (!fileOpen(&file, path, FILE_READ)) return false;
 
-    return false;  // unimplemented
+    if (!readTable(&file, &database->table)) {
+        fileClose(&file);
+        return false;
+    }
+
+    fileClose(&file);
+    return true;
 }

@@ -13,6 +13,16 @@
 #include <unistd.h>
 #endif
 
+#include <signal.h>
+
+volatile sig_atomic_t shouldExit = 0;
+
+static void handleSigInt(int sig) {
+    (void)sig;
+    signal(SIGINT, SIG_IGN);  // ignore further Ctrl+C presses.
+    shouldExit = 1;
+}
+
 static void printBanner() {
     printf(ANSI_NEON_BLUE);
 
@@ -41,6 +51,7 @@ static void repl() {
     char line[1024];
     Engine* engine = createEngine();
     for (;;) {
+        if (shouldExit) break;
         printf("> ");
 
         if (!fgets(line, sizeof(line), stdin)) {
@@ -81,6 +92,7 @@ static void repl() {
 }
 
 int main(int argc, const char* argv[]) {
+    signal(SIGINT, handleSigInt);
     repl();
     return 0;
 }
