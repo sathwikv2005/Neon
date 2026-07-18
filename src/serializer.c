@@ -84,7 +84,7 @@ static bool readSize(File* file, int* size) {
         `int` could be smaller then 32bits. while rare, but allowed by the C
         standard
      */
-    if (value < 0 || value > INT_MAX) return false;
+    if (value > INT_MAX) return false;
 
     *size = (int)value;
     return true;
@@ -104,7 +104,10 @@ static ObjString* readString(File* file) {
     if (len == UINT32_MAX) return NULL;
 
     char* chars = ALLOCATE(char, len + 1);
-    if (!readBytes(file, chars, len)) return NULL;
+    if (!readBytes(file, chars, len)) {
+        FREE_ARRAY(char, chars, len + 1);
+        return NULL;
+    }
     chars[len] = '\0';
 
     return takeString(chars, len);
