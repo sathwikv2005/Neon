@@ -26,6 +26,7 @@ typedef enum {
     OP_DBSIZE,
 
     // VM management
+    OP_EXIT,
     OP_RETURN
 
 } OpCode;

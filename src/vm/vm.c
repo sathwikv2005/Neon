@@ -4,6 +4,9 @@
 #include "debug.h"
 #include "vm_common.h"
 
+// return exit back to the engine
+#define INTERPRET_EXIT() ((InterpretOutput){INTERPRET_EXIT, false, NULL_VAL})
+
 // return ok back to the engine
 #define INTERPRET_OK() ((InterpretOutput){INTERPRET_OK, false, NULL_VAL})
 
@@ -91,6 +94,8 @@ static InterpretOutput run(VM* vm) {
 
             case OP_RETURN:
                 return INTERPRET_OK();
+            case OP_EXIT:
+                return INTERPRET_EXIT();
             default:
                 break;
         }
