@@ -28,8 +28,7 @@ static Obj* allocateObject(size_t size, ObjType type) {
     return object;
 }
 
-static ObjString* allocateString(VM* vm, char* chars, int length,
-                                 uint32_t hash) {
+static ObjString* allocateString(char* chars, int length, uint32_t hash) {
     ObjString* string = ALLOCATE_OBJ(ObjString, OBJ_STRING);
     string->length = length;
     string->chars = chars;
@@ -60,7 +59,7 @@ static uint32_t hashString(const char* key, int length) {
     This reduces duplicate allocations and allows string equality to be just a
     simple pointer comparison.
  */
-ObjString* takeString(VM* vm, char* chars, int length) {
+ObjString* takeString(char* chars, int length) {
     uint32_t hash = hashString(chars, length);
 
     ObjString* interned = tableFindString(&server.strings, chars, length, hash);
@@ -70,7 +69,7 @@ ObjString* takeString(VM* vm, char* chars, int length) {
         return interned;
     }
 
-    return allocateString(vm, chars, length, hash);
+    return allocateString(chars, length, hash);
 }
 
 /*
@@ -79,7 +78,7 @@ ObjString* takeString(VM* vm, char* chars, int length) {
     This reduces duplicate allocations and allows string equality to be just a
     simple pointer comparison.
  */
-ObjString* copyString(VM* vm, const char* chars, int length) {
+ObjString* copyString(const char* chars, int length) {
     uint32_t hash = hashString(chars, length);
 
     ObjString* interned = tableFindString(&server.strings, chars, length, hash);
@@ -90,11 +89,11 @@ ObjString* copyString(VM* vm, const char* chars, int length) {
     char* heapChars = ALLOCATE(char, length + 1);
     memcpy(heapChars, chars, length);
     heapChars[length] = '\0';
-    return allocateString(vm, heapChars, length, hash);
+    return allocateString(heapChars, length, hash);
 }
 
-static Value stringValue(VM* vm, const char* chars) {
-    return OBJ_VAL(copyString(vm, chars, (int)strlen(chars)));
+static Value stringValue(const char* chars) {
+    return OBJ_VAL(copyString(chars, (int)strlen(chars)));
 }
 
 static void printString(char* str, bool withQuotes) {
@@ -116,26 +115,26 @@ void printObject(Value value) {
     }
 }
 
-ObjString* objTypeName(VM* vm, Value value) {
+ObjString* objTypeName(Value value) {
     switch (OBJ_TYPE(value)) {
         case OBJ_STRING:
-            return copyString(vm, "string", 6);
+            return copyString("string", 6);
     }
 
-    return copyString(vm, "unknown type", 12);
+    return copyString("unknown type", 12);
 }
 
-Value valueToString(VM* vm, Value value) {
+Value valueToString(Value value) {
     char buffer[32];
 
     if (IS_NULL(value)) {
-        return stringValue(vm, "null");
+        return stringValue("null");
     }
 
     if (IS_NUMBER(value)) {
         int length =
             snprintf(buffer, sizeof(buffer), "%.15g", AS_NUMBER(value));
-        return OBJ_VAL(copyString(vm, buffer, length));
+        return OBJ_VAL(copyString(buffer, length));
     }
 
     switch (OBJ_TYPE(value)) {
