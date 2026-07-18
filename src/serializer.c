@@ -111,8 +111,22 @@ static ObjString* readString(File* file) {
 }
 
 bool writeValue(File* file, Value value) {
-    // TODO
-    return false;  // unimplemented
+    uint8_t tag;
+
+    if (IS_OBJ(value)) {
+        tag = VAL_OBJ;
+    } else if (IS_NULL(value)) {
+        tag = VAL_NULL;
+    } else if (IS_NUMBER(value)) {
+        tag = VAL_NUMBER;
+    } else {
+        return false;
+    }
+
+    if (!writeU8(file, tag)) return false;
+
+    return tag == VAL_OBJ ? writeObj(file, value)
+                            : writeU64(file, (uint64_t)value);
 }
 
 bool readValue(File* file, Value* value) {
