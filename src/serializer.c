@@ -110,6 +110,20 @@ static ObjString* readString(File* file) {
     return takeString(chars, len);
 }
 
+bool writeObj(File* file, Value value) {
+    Obj* obj = AS_OBJ(value);
+
+    if (!writeU8(file, obj->type)) return false;
+
+    switch (obj->type) {
+        case OBJ_STRING:
+            return writeString(file, AS_STRING(value));
+        default:
+            break;
+    }
+    return false;
+}
+
 bool writeValue(File* file, Value value) {
     uint8_t tag;
 
@@ -126,7 +140,7 @@ bool writeValue(File* file, Value value) {
     if (!writeU8(file, tag)) return false;
 
     return tag == VAL_OBJ ? writeObj(file, value)
-                            : writeU64(file, (uint64_t)value);
+                          : writeU64(file, (uint64_t)value);
 }
 
 bool readValue(File* file, Value* value) {
