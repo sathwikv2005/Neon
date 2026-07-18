@@ -85,31 +85,31 @@ bool valuesEqual(Value a, Value b) {
 #endif
 }
 
-ObjString* valueTypeName(VM* vm, Value value) {
+ObjString* valueTypeName(Value value) {
 #ifdef NAN_BOXING
     if (IS_NULL(value)) {
-        return copyString(vm, "null", 4);
+        return copyString("null", 4);
     }
 
     if (IS_NUMBER(value)) {
-        return copyString(vm, "number", 6);
+        return copyString("number", 6);
     }
 
     if (IS_OBJ(value)) {
-        return objTypeName(vm, value);
+        return objTypeName(value);
     }
 #else
     switch (value.type) {
         case VAL_NULL:
-            return copyString(vm, "null", 4);
+            return copyString("null", 4);
 
         case VAL_NUMBER:
-            return copyString(vm, "number", 6);
+            return copyString("number", 6);
 
         case VAL_OBJ:
-            return objTypeName(vm, value);
+            return objTypeName(value);
     }
 #endif
 
-    return copyString(vm, "unknown type", 12);
+    return copyString("unknown type", 12);
 }
