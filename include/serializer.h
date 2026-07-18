@@ -12,7 +12,7 @@ bool writeValue(File* file, Value value);
 bool readValue(File* file, Value* value);
 
 bool writeKey(File* file, ObjString* key);
-bool readKey(File* file, ObjString** key);
+ObjString* readKey(File* file);
 
 bool writeEntry(File* file, Entry* entry);
 bool readEntry(File* file, Entry* entry);

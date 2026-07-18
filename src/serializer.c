@@ -122,10 +122,7 @@ bool readValue(File* file, Value* value) {
 
 bool writeKey(File* file, ObjString* key) { return writeString(file, key); }
 
-bool readKey(File* file, ObjString** key) {
-    // TODO
-    return false;  // unimplemented
-}
+ObjString* readKey(File* file) { return readString(file); }
 
 bool writeEntry(File* file, Entry* entry) {
     if (entry->key == NULL) return false;
