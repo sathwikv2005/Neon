@@ -5,6 +5,20 @@
 #include "../include/memory.h"
 #include "object.h"
 
+/*
+Serialized file
+ ├── Magic
+ ├── Version
+ ├── Size
+ └── Entries
+      ├── Key
+      └── Value
+           ├── Tag
+           └── Object?
+                ├── Object Type
+                └── Object Data
+*/
+
 static bool writeU8(File* file, uint8_t value) {
     return fileWrite(file, &value, sizeof(value)) == sizeof(value);
 }
@@ -228,6 +242,18 @@ bool writeTable(File* file, Table* table) {
 }
 
 bool readTable(File* file, Table* table) {
-    // TODO
-    return false;  // unimplemented
+    if (!readMagic(file)) return false;
+
+    int size;
+    if (!readSize(file, &size)) return false;
+
+    for (int i = 0; i < size; i++) {
+        Entry entry;
+
+        if (!readEntry(file, &entry)) return false;
+
+        if (!tableSet(table, entry.key, entry.value)) return false;
+    }
+
+    return true;
 }
