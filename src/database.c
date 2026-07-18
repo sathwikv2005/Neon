@@ -30,10 +30,16 @@ Database* loadDatabase(uint8_t id) {
 }
 
 // if no active clients, save database and free the database from memory
-void unloadDatabase(Database* database) {
-    if (database->clients > 0) return;
-    // TODO: if no active clients, save the database onto a file
+bool unloadDatabase(Database* database) {
+    if (database->clients > 0) return false;
+
+    if (!saveDatabase(database)) {
+        return false;
+    }
+
     freeDatabase(database);
+
+    return true;
 }
 
 // write a complete snapshot of the database to disk.
@@ -46,6 +52,12 @@ bool saveDatabase(Database* database) {
 // sync pending in memory changes with the database file on disk
 bool syncDatabase(Database* database) {
     // TODO: sync pending in memory changes with the database file on disk
+
+    return false;  // unimplemented
+}
+
+bool readDatabase(Database* database) {
+    // TODO: read the saved database file
 
     return false;  // unimplemented
 }
