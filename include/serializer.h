@@ -4,7 +4,7 @@
 #include "file.h"
 #include "table.h"
 
-#define SERIALIZER_MAGIC "NEON"  // the serializer expects 4 bytes
+#define SERIALIZER_MAGIC "NEON"
 #define SERIALIZER_MAGIC_LEN 4
 #define SERIALIZER_VERSION 1
 

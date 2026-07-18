@@ -1,5 +1,7 @@
 #include "serializer.h"
 
+#include <limits.h>
+
 #include "object.h"
 
 static bool writeU8(File* file, uint8_t value) {
@@ -65,10 +67,26 @@ static bool readMagic(File* file) {
 }
 
 static bool writeSize(File* file, int size) {
+    if (size < 0) return false;
     // the serializer expects 4 bytes. size of int is not guaranteed
     uint32_t value = (uint32_t)size;
 
     return writeU32(file, value);
+}
+
+static bool readSize(File* file, int* size) {
+    uint32_t value;
+
+    if (!readU32(file, &value)) return false;
+
+    /*
+        `int` could be smaller then 32bits. while rare, but allowed by the C
+        standard
+     */
+    if (value < 0 || value > INT_MAX) return false;
+
+    *size = (int)value;
+    return true;
 }
 
 static bool writeString(File* file, ObjString* string) {
