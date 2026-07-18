@@ -28,7 +28,7 @@ Database* loadDatabase(uint8_t id) {
     if (server.database[id].loaded) return &server.database[id];
     initDatabase(&server.database[id]);
 
-    // TODO: load database from save/checkpoint onto memory
+    readDatabase(&server.database[id]);
 
     server.database[id].id = id;
     return &server.database[id];
@@ -53,7 +53,7 @@ bool saveDatabase(Database* database) {
     getSnapShotPath(path, sizeof(path), database->id);
 
     File file;
-    if (!fileOpen(&file, &path, FILE_WRITE)) return false;
+    if (!fileOpen(&file, path, FILE_WRITE)) return false;
 
     if (!writeTable(&file, &database->table)) {
         fileClose(&file);
@@ -72,7 +72,16 @@ bool syncDatabase(Database* database) {
 }
 
 bool readDatabase(Database* database) {
-    // TODO: read the saved database file
+    char path[64];
+    getSnapShotPath(path, sizeof(path), database->id);
+    File file;
+    if (!fileOpen(&file, path, FILE_READ)) return false;
 
-    return false;  // unimplemented
+    if (!readTable(&file, &database->table)) {
+        fileClose(&file);
+        return false;
+    }
+
+    fileClose(&file);
+    return true;
 }
