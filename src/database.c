@@ -2,6 +2,7 @@
 
 #include "../include/memory.h"
 #include "file.h"
+#include "serializer.h"
 #include "server.h"
 
 static void initDatabase(Database* database) {
@@ -14,6 +15,10 @@ static void freeDatabase(Database* database) {
     freeTable(&database->table);
     database->clients = 0;
     database->loaded = false;
+}
+
+static void getSnapShotPath(char* path, size_t size, uint8_t id) {
+    snprintf(path, size, "./db/%u/snapshot.ne", (unsigned)id);
 }
 
 // load database from save/checkpoint onto memory
@@ -44,9 +49,19 @@ bool unloadDatabase(Database* database) {
 
 // write a complete snapshot of the database to disk.
 bool saveDatabase(Database* database) {
-    // TODO: write a complete snapshot of the database to disk.
+    char path[64];
+    getSnapShotPath(path, sizeof(path), database->id);
 
-    return false;  // unimplemented
+    File file;
+    if (!fileOpen(&file, &path, FILE_WRITE)) return false;
+
+    if (!writeTable(&file, &database->table)) {
+        fileClose(&file);
+        return false;
+    }
+
+    fileClose(&file);
+    return true;
 }
 
 // sync pending in memory changes with the database file on disk
