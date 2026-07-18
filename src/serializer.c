@@ -152,12 +152,17 @@ bool readValue(File* file, Value* value) {
 
     switch (tag) {
         case VAL_NULL:
-        case VAL_NUMBER:
-            return readU64(file, value);
+        case VAL_NUMBER: {
+            uint64_t bits;
+            if (!readU64(file, &bits)) return false;
+
+            *value = (Value)bits;
+            return true;
+        }
         case VAL_OBJ:
             return readObj(file, value);
         default:
-            break;
+            return false;
     }
 
     return false;
