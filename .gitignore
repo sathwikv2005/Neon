@@ -16,3 +16,6 @@ compile_commands.json
 
 #installer
 release/
+
+#database
+db/*
