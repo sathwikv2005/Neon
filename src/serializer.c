@@ -2,6 +2,7 @@
 
 #include <limits.h>
 
+#include "../include/memory.h"
 #include "object.h"
 
 static bool writeU8(File* file, uint8_t value) {
@@ -95,6 +96,18 @@ static bool writeString(File* file, ObjString* string) {
         return false;
     }
     return writeBytes(file, string->chars, len);
+}
+
+static ObjString* readString(File* file) {
+    uint32_t len;
+    if (!readU32(file, &len)) return NULL;
+    if (len == UINT32_MAX) return NULL;
+
+    char* chars = ALLOCATE(char, len + 1);
+    if (!readBytes(file, chars, len)) return NULL;
+    chars[len] = '\0';
+
+    return takeString(chars, len);
 }
 
 bool writeValue(File* file, Value value) {
