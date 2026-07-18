@@ -151,6 +151,8 @@ static TokenType wordType() {
                     case 'C':
                         return checkKeyword(2, 2, "HO", TOKEN_ECHO);
                     case 'X':
+                        if (scanner.current - scanner.start == 4)
+                            return checkKeyword(2, 2, "IT", TOKEN_EXIT);
                         return checkKeyword(2, 4, "ISTS", TOKEN_EXISTS);
                 }
             }
