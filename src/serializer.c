@@ -122,7 +122,23 @@ bool writeObj(File* file, Value value) {
         case OBJ_STRING:
             return writeString(file, AS_STRING(value));
         default:
-            break;
+            return false;
+    }
+    return false;
+}
+
+bool readObj(File* file, Value* value) {
+    uint8_t type;
+    if (!readU8(file, &type)) return false;
+    switch (type) {
+        case OBJ_STRING: {
+            ObjString* string = readString(file);
+            if (string == NULL) return false;
+            *value = OBJ_VAL(string);
+            return true;
+        }
+        default:
+            return false;
     }
     return false;
 }
