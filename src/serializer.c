@@ -105,6 +105,7 @@ static bool readSize(File* file, int* size) {
 }
 
 static bool writeString(File* file, ObjString* string) {
+    if (string->length < 0) return false;
     uint32_t len = (uint32_t)(string->length);
     if (!writeU32(file, len)) {
         return false;
