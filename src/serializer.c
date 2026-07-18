@@ -195,8 +195,18 @@ bool writeEntry(File* file, Entry* entry) {
 }
 
 bool readEntry(File* file, Entry* entry) {
-    // TODO
-    return false;  // unimplemented
+    entry->key = readKey(file);
+    if (entry->key == NULL) return false;
+    if (!readValue(file, &entry->value)) {
+        if (entry->key->ref == 1) {
+            // only reference to the string is in server.strings so, free it.
+            freeObject((Obj*)entry->key);
+            entry->key = NULL;
+        }
+        return false;
+    }
+
+    return true;
 }
 
 bool writeTable(File* file, Table* table) {
