@@ -55,6 +55,41 @@ static void vlog(LogLevel level, const char* file, int line, const char* fmt,
     fileWrite(&logFile, buffer, offset);
 }
 
+void logTrace(const char* file, int line, const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    vlog(LOG_TRACE, file, line, fmt, args);
+    va_end(args);
+}
+
+void logDebug(const char* file, int line, const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    vlog(LOG_DEBUG, file, line, fmt, args);
+    va_end(args);
+}
+
+void logInfo(const char* file, int line, const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    vlog(LOG_INFO, file, line, fmt, args);
+    va_end(args);
+}
+
+void logWarn(const char* file, int line, const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    vlog(LOG_WARN, file, line, fmt, args);
+    va_end(args);
+}
+
+void logError(const char* file, int line, const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    vlog(LOG_ERROR, file, line, fmt, args);
+    va_end(args);
+}
+
 void logFatal(const char* file, int line, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
