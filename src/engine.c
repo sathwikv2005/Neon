@@ -1,6 +1,7 @@
 #include "engine.h"
 
 #include "../include/memory.h"
+#include "logger.h"
 
 Engine* createEngine() {
     Engine* engine = malloc(sizeof(Engine));
@@ -19,7 +20,9 @@ Engine* createEngine() {
 void freeEngine(Engine* engine) {
     Database* db = engine->vm.database;
     db->clients--;
-    unloadDatabase(db);
+    if (!unloadDatabase(db)) {
+        LOG_FATAL("Saving database(%d) failed.", db->id);
+    }
     freevm(&engine->vm);
     free(engine);
 }
