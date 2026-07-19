@@ -26,7 +26,8 @@ void freeEngine(Engine* engine) {
     Database* db = engine->vm.database;
     db->clients--;
     if (!unloadDatabase(db)) {
-        LOG_FATAL("Saving database(%u) failed.", (unsigned)db->id);
+        LOG_FATAL("Saving database(%u) failed on connection close.",
+                  (unsigned)db->id);
     }
     freevm(&engine->vm);
     free(engine);

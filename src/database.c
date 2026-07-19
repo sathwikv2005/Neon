@@ -52,7 +52,6 @@ Database* loadDatabase(uint8_t id) {
 // save database and if no active clients, free the database from memory
 bool unloadDatabase(Database* database) {
     if (!saveDatabase(database)) {
-        LOG_ERROR("Saving database(%u) failed", (unsigned)database->id);
         return false;
     }
 
