@@ -70,6 +70,7 @@ bool syncDatabase(Database* database) {
     return false;  // unimplemented
 }
 
+// read database from snapshot file
 bool readDatabase(Database* database) {
     char path[64];
     getSnapShotPath(path, sizeof(path), database->id);
