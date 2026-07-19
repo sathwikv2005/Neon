@@ -10,6 +10,8 @@
 
 #define NEON_VERSION_STRING "0.1.0"
 
+#define LOG_FILE_PATH "./logs/log.txt"
+
 #define ANSI_RED "\x1b[31m"
 #define ANSI_YELLOW "\x1b[33m"
 #define ANSI_CYAN "\033[36m"

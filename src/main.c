@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "engine.h"
+#include "logger.h"
 #include "vm.h"
 
 #ifdef _WIN32
@@ -93,6 +94,8 @@ static void repl() {
 
 int main(int argc, const char* argv[]) {
     signal(SIGINT, handleSigInt);
+    if (!initLogger(LOG_FILE_PATH)) return 1;
     repl();
+    closeLogger();
     return 0;
 }
