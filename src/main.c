@@ -51,6 +51,12 @@ static void repl() {
     }
     char line[1024];
     Engine* engine = createEngine();
+    if (engine == NULL) {
+        printf(
+            "Failed to start a repl session please check the log file for "
+            "errors.");
+        return;
+    }
     for (;;) {
         if (shouldExit) break;
         printf("> ");

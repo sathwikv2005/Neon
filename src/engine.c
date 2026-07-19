@@ -10,7 +10,12 @@ Engine* createEngine() {
     initvm(&engine->vm);
 
     // TODO: take database id as input from user and pass here. Default = 0
-    Database* database = loadDatabase(0);
+    uint8_t id = 0;
+    Database* database = loadDatabase(id);
+    if (database == NULL) {
+        LOG_ERROR("Unable to load database(%u)", (unsigned)id);
+        return NULL;
+    }
 
     engine->vm.database = database;
     database->clients += 1;
@@ -21,7 +26,7 @@ void freeEngine(Engine* engine) {
     Database* db = engine->vm.database;
     db->clients--;
     if (!unloadDatabase(db)) {
-        LOG_FATAL("Saving database(%d) failed.", db->id);
+        LOG_FATAL("Saving database(%u) failed.", (unsigned)db->id);
     }
     freevm(&engine->vm);
     free(engine);
