@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "engine.h"
+#include "logger.h"
 #include "vm.h"
 
 #ifdef _WIN32
@@ -50,6 +51,12 @@ static void repl() {
     }
     char line[1024];
     Engine* engine = createEngine();
+    if (engine == NULL) {
+        printf(
+            "Failed to start a repl session please check the log file for "
+            "errors.");
+        return;
+    }
     for (;;) {
         if (shouldExit) break;
         printf("> ");
@@ -93,6 +100,11 @@ static void repl() {
 
 int main(int argc, const char* argv[]) {
     signal(SIGINT, handleSigInt);
+    if (!initLogger(LOG_FILE_PATH)) {
+        printf("failed to initilize the logger\n");
+        return 1;
+    }
     repl();
+    closeLogger();
     return 0;
 }
