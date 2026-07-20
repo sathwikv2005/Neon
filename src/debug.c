@@ -97,6 +97,12 @@ int disassembleInstruction(const Chunk* chunk, int offset) {
         case OP_DBSIZE:
             return simpleInstruction("OP_DBSIZE", offset);
 
+        case OP_EXIT:
+            return simpleInstruction("OP_EXIT", offset);
+
+        case OP_RETURN:
+            return simpleInstruction("OP_RETURN", offset);
+
         default:
             printf("Unknown opcode %d\n", instruction);
             return offset + 1;
