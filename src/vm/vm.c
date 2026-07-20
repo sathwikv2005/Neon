@@ -44,7 +44,7 @@ static InterpretOutput run(VM* vm) {
 
 /*
     The ip is cached locally so, that the c compiler can store it in a register
-    for faster access hence, the ip must be written back to the call frame so
+    for faster access hence, the ip must be written back to the vm so
     that the runtimeError() can report the correct source line.
 */
 #define RUNTIME_ERROR(...)             \
