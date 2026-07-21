@@ -64,7 +64,7 @@ static InterpretOutput run(VM* vm) {
         if (GET_DEBUG_TRACE()) {
             printf("Stack=>\t");
             printf("[ ");
-            for (Value* slot = vm.stack; slot < vm.stackTop; slot++) {
+            for (Value* slot = vm->stack; slot < vm->stackTop; slot++) {
                 printValue(*slot);
                 printf(", ");
             }

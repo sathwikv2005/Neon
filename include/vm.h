@@ -17,10 +17,10 @@
 #define DEBUG_LOG_GC (1u << 3)
 
 // setters
-#define SET_DEBUG_TRACE() (vm.debugFlags |= DEBUG_TRACE)
-#define SET_DEBUG_CODE() (vm.debugFlags |= DEBUG_CODE)
-#define SET_DEBUG_STRESS_GC() (vm.debugFlags |= DEBUG_STRESS_GC)
-#define SET_DEBUG_LOG_GC() (vm.debugFlags |= DEBUG_LOG_GC)
+#define SET_DEBUG_TRACE() (vm->debugFlags |= DEBUG_TRACE)
+#define SET_DEBUG_CODE() (vm->debugFlags |= DEBUG_CODE)
+#define SET_DEBUG_STRESS_GC() (vm->debugFlags |= DEBUG_STRESS_GC)
+#define SET_DEBUG_LOG_GC() (vm->debugFlags |= DEBUG_LOG_GC)
 
 // enable all
 #define SET_DEBUG()            \
@@ -32,10 +32,10 @@
     } while (0)
 
 // getters
-#define GET_DEBUG_TRACE() (((vm.debugFlags) & DEBUG_TRACE) != 0)
-#define GET_DEBUG_CODE() (((vm.debugFlags) & DEBUG_CODE) != 0)
-#define GET_DEBUG_STRESS_GC() (((vm.debugFlags) & DEBUG_STRESS_GC) != 0)
-#define GET_DEBUG_LOG_GC() (((vm.debugFlags) & DEBUG_LOG_GC) != 0)
+#define GET_DEBUG_TRACE() (((vm->debugFlags) & DEBUG_TRACE) != 0)
+#define GET_DEBUG_CODE() (((vm->debugFlags) & DEBUG_CODE) != 0)
+#define GET_DEBUG_STRESS_GC() (((vm->debugFlags) & DEBUG_STRESS_GC) != 0)
+#define GET_DEBUG_LOG_GC() (((vm->debugFlags) & DEBUG_LOG_GC) != 0)
 
 #define STACK_MAX UINT8_COUNT
 
