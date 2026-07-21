@@ -178,6 +178,8 @@ bool tableDelete(Table* table, ObjString* key) {
     return true;
 }
 
+Entry* tableEntries(Table* table) { return table->entries; }
+
 // void markTable(Table* table) {
 //     for (int i = 0; i < table->capacity; i++) {
 //         Entry* entry = &table->entries[i];
