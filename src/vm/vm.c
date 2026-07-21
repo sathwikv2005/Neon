@@ -92,6 +92,15 @@ static InterpretOutput run(VM* vm) {
                 return INTERPRET_RESULT(value);
             }
 
+            case OP_DEL: {
+                ObjString* key = READ_STRING();
+                if (!tableDelete(&vm->database->table, key)) {
+                    RUNTIME_ERROR("Failed to delete %s", key->chars);
+                    return ERROR_STATUS(INTERPRET_RUNTIME_ERROR);
+                }
+                return INTERPRET_OK();
+            }
+
             case OP_RETURN:
                 return INTERPRET_OK();
             case OP_EXIT:
