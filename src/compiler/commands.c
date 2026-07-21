@@ -10,3 +10,8 @@ void setCommand(Compiler* compiler) {
     parseKey(compiler, "expect a key after 'SET'");
     parseValue(compiler, "expect a value after key");
 }
+
+void delCommand(Compiler* compiler) {
+    emitByte(compiler, OP_DEL);
+    parseKey(compiler, "expect a key after 'DEL'");
+}

@@ -46,6 +46,9 @@ static void command(Compiler* compiler) {
         case TOKEN_SET:
             setCommand(compiler);
             break;
+        case TOKEN_DEL:
+            delCommand(compiler);
+            break;
         case TOKEN_EXIT: {
             emitByte(compiler, OP_EXIT);
             break;

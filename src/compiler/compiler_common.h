@@ -30,5 +30,6 @@ Chunk* currentChunk(Compiler* compiler);
 // commands
 void getCommand(Compiler* compiler);
 void setCommand(Compiler* compiler);
+void delCommand(Compiler* compiler);
 
 #endif
