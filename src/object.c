@@ -105,10 +105,38 @@ static void printString(char* str, bool withQuotes) {
     return;
 }
 
+void printListValue(Value value) {
+    if (IS_STRING(value)) {
+        printString(AS_CSTRING(value), true);
+        return;
+    }
+
+    printValue(value);
+}
+
+void printList(ObjList* list) {
+    printf("[ ");
+    if (list->list.count == 0) {
+        printf("]");
+        return;
+    }
+    Value* values = list->list.values;
+    int i;
+    for (i = 0; i < list->list.count - 1; i++) {
+        printListValue(values[i]);
+        printf(", ");
+    }
+    printListValue(values[i]);
+    printf(" ]");
+}
+
 void printObject(Value value) {
     switch (OBJ_TYPE(value)) {
         case OBJ_STRING:
             printString(AS_CSTRING(value), false);
+            break;
+        case OBJ_LIST:
+            printList(AS_LIST(value));
             break;
         default:
             break;
@@ -119,9 +147,51 @@ ObjString* objTypeName(Value value) {
     switch (OBJ_TYPE(value)) {
         case OBJ_STRING:
             return copyString("string", 6);
+        case OBJ_LIST:
+            return copyString("list", 4);
     }
 
     return copyString("unknown type", 12);
+}
+
+static Value listToString(ObjList* list) {
+    if (list->list.count == 0) {
+        return OBJ_VAL(copyString("[]", 2));
+    }
+
+    int capacity = 64;
+    int length = 0;
+    char* chars = ALLOCATE(char, capacity);
+
+    chars[length++] = '[';
+
+    for (int i = 0; i < list->list.count; i++) {
+        Value value = list->list.values[i];
+
+        ObjString* string = AS_STRING(valueToString(value));
+
+        int strLength = string->length;
+
+        while (length + strLength + 3 >= capacity) {
+            int oldCapacity = capacity;
+            capacity *= 2;
+            chars = GROW_ARRAY(char, chars, oldCapacity, capacity);
+        }
+
+        memcpy(chars + length, string->chars, strLength);
+        length += strLength;
+
+        if (i != list->list.count - 1) {
+            chars[length++] = ',';
+            chars[length++] = ' ';
+        }
+    }
+
+    chars[length++] = ']';
+    chars[length] = '\0';
+
+    ObjString* result = takeString(chars, length);
+    return OBJ_VAL(result);
 }
 
 Value valueToString(Value value) {
@@ -140,7 +210,15 @@ Value valueToString(Value value) {
     switch (OBJ_TYPE(value)) {
         case OBJ_STRING:
             return value;
+        case OBJ_LIST:
+            return listToString(AS_LIST(value));
     }
 
     return NULL_VAL;
+}
+
+ObjList* newList(int capacity) {
+    ObjList* list = ALLOCATE_OBJ(ObjList, OBJ_LIST);
+    initValueArrayWithCapacity(&list->list, capacity);
+    return list;
 }

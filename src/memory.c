@@ -120,6 +120,17 @@ void freeObject(Obj* object) {
             FREE(ObjString, object);
             break;
         }
+        case OBJ_LIST: {
+            ObjList* list = (ObjList*)object;
+            for (int i = 0; i < list->list.count; i++) {
+                if (IS_OBJ(list->list.values[i])) {
+                    releaseObject(AS_OBJ(list->list.values[i]));
+                }
+            }
+            freeValueArray(&list->list);
+            FREE(ObjList, list);
+            break;
+        }
     }
 }
 
