@@ -162,9 +162,9 @@ static TokenType wordType() {
         case 'G':
             return checkKeyword(1, 2, "ET", TOKEN_GET);
         case 'K':
-            return checkKeyword(1, 4, "EYS", TOKEN_KEYS);
+            return checkKeyword(1, 3, "EYS", TOKEN_KEYS);
         case 'P':
-            return checkKeyword(1, 4, "ING", TOKEN_PING);
+            return checkKeyword(1, 3, "ING", TOKEN_PING);
         case 'R':
             return checkKeyword(1, 5, "ENAME", TOKEN_RENAME);
         case 'S':
