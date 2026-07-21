@@ -15,3 +15,8 @@ void delCommand(Compiler* compiler) {
     emitByte(compiler, OP_DEL);
     parseKey(compiler, "expect a key after 'DEL'");
 }
+
+void keysCommand(Compiler* compiler) {
+    emitByte(compiler, OP_KEYS);
+    // TODO: need to take in a string as pattern and need to emit it
+}

@@ -31,5 +31,6 @@ Chunk* currentChunk(Compiler* compiler);
 void getCommand(Compiler* compiler);
 void setCommand(Compiler* compiler);
 void delCommand(Compiler* compiler);
+void keysCommand(Compiler* compiler);
 
 #endif
