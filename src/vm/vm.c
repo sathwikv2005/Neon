@@ -101,6 +101,17 @@ static InterpretOutput run(VM* vm) {
                 return INTERPRET_OK();
             }
 
+            case OP_KEYS: {
+                Entry* entries = tableEntries(&vm->database->table);
+                int size = vm->database->table.size;
+                ObjList* list = newList(size);
+                for (int i = 0; i < vm->database->table.capacity; i++) {
+                    if (entries[i].key == NULL) continue;
+                    writeValueArray(&list->list, OBJ_VAL(entries[i].key));
+                }
+                return INTERPRET_RESULT(OBJ_VAL(list));
+            }
+
             case OP_RETURN:
                 return INTERPRET_OK();
             case OP_EXIT:
