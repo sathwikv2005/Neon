@@ -56,6 +56,9 @@ static void command(Compiler* compiler) {
             emitByte(compiler, OP_EXIT);
             break;
         }
+        case TOKEN_PING:
+            pingCommand(compiler);
+            break;
         default:
             error(compiler, "unexpected command");
             break;
