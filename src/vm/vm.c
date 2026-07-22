@@ -101,6 +101,13 @@ static InterpretOutput run(VM* vm) {
                 return INTERPRET_OK();
             }
 
+            case OP_PING: {
+                // maybe should return "PONG" in the furture.
+                // to do that will need to intern "PONG" at startup as a special
+                // string
+                return INTERPRET_OK();
+            }
+
             case OP_KEYS: {
                 Entry* entries = tableEntries(&vm->database->table);
                 int size = vm->database->table.size;
