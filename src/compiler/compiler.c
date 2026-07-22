@@ -39,29 +39,13 @@ void parseValue(Compiler* compiler, const char* message) {
 
 static void command(Compiler* compiler) {
     advance(compiler);
-    switch (compiler->parser->previous.type) {
-        case TOKEN_GET:
-            getCommand(compiler);
-            break;
-        case TOKEN_SET:
-            setCommand(compiler);
-            break;
-        case TOKEN_DEL:
-            delCommand(compiler);
-            break;
-        case TOKEN_KEYS:
-            keysCommand(compiler);
-            break;
-        case TOKEN_EXIT: {
-            exitCommand(compiler);
-            break;
-        }
-        case TOKEN_PING:
-            pingCommand(compiler);
-            break;
-        default:
-            error(compiler, "unexpected command");
-            break;
+
+    TokenType type = compiler->parser->previous.type;
+
+    if (type < commandTableSize && commandTable[type]) {
+        commandTable[type](compiler);
+    } else {
+        error(compiler, "unexpected command");
     }
 
     // recover from panic mode.

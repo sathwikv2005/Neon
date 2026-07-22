@@ -28,11 +28,8 @@ void parseValue(Compiler* compiler, const char* message);
 Chunk* currentChunk(Compiler* compiler);
 
 // commands
-void getCommand(Compiler* compiler);
-void setCommand(Compiler* compiler);
-void delCommand(Compiler* compiler);
-void keysCommand(Compiler* compiler);
-void exitCommand(Compiler* compiler);
-void pingCommand(Compiler* compiler);
+typedef void (*CommandFn)(Compiler*);
+extern CommandFn commandTable[];
+extern const size_t commandTableSize;
 
 #endif
