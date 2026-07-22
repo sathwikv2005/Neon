@@ -53,7 +53,7 @@ static void command(Compiler* compiler) {
             keysCommand(compiler);
             break;
         case TOKEN_EXIT: {
-            emitByte(compiler, OP_EXIT);
+            exitCommand(compiler);
             break;
         }
         case TOKEN_PING:

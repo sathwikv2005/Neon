@@ -21,4 +21,6 @@ void keysCommand(Compiler* compiler) {
     // TODO: need to take in a string as pattern and need to emit it
 }
 
+void exitCommand(Compiler* compiler) { emitByte(compiler, OP_EXIT); }
+
 void pingCommand(Compiler* compiler) { emitByte(compiler, OP_PING); }

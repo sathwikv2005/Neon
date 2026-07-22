@@ -32,6 +32,7 @@ void getCommand(Compiler* compiler);
 void setCommand(Compiler* compiler);
 void delCommand(Compiler* compiler);
 void keysCommand(Compiler* compiler);
+void exitCommand(Compiler* compiler);
 void pingCommand(Compiler* compiler);
 
 #endif
