@@ -10,6 +10,7 @@ typedef enum {
     TOKEN_PING,
     TOKEN_ECHO,
     TOKEN_QUIT,
+    TOKEN_EXIT,
 
     // CRUD Op
     TOKEN_SET,
@@ -33,7 +34,6 @@ typedef enum {
     TOKEN_STRING,
 
     // Special
-    TOKEN_EXIT,
     TOKEN_EOF,
     TOKEN_ERROR
 
