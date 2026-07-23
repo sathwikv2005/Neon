@@ -21,6 +21,8 @@ static void keysCommand(Compiler* compiler) {
     // TODO: need to take in a string as pattern and need to emit it
 }
 
+static void DBSizeCommand(Compiler* compiler) { emitByte(compiler, OP_DBSIZE); }
+
 static void exitCommand(Compiler* compiler) { emitByte(compiler, OP_EXIT); }
 static void quitCommand(Compiler* compiler) { emitByte(compiler, OP_EXIT); }
 
@@ -30,7 +32,7 @@ CommandFn commandTable[] = {
     [TOKEN_GET] = getCommand,   [TOKEN_SET] = setCommand,
     [TOKEN_DEL] = delCommand,   [TOKEN_KEYS] = keysCommand,
     [TOKEN_EXIT] = exitCommand, [TOKEN_PING] = pingCommand,
-    [TOKEN_QUIT] = quitCommand,
+    [TOKEN_QUIT] = quitCommand, [TOKEN_DBSIZE] = DBSizeCommand,
 };
 
 const size_t commandTableSize = sizeof(commandTable) / sizeof(commandTable[0]);
