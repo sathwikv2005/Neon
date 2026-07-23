@@ -102,9 +102,9 @@ static InterpretOutput run(VM* vm) {
             }
 
             case OP_PING: {
-                // maybe should return "PONG" in the furture.
-                // to do that will need to intern "PONG" at startup as a special
-                // string
+                // TODO: maybe should return "PONG" in the furture.
+                //  to do that will need to intern "PONG" at startup as a
+                //  special string
                 return INTERPRET_OK();
             }
 
@@ -135,6 +135,17 @@ static InterpretOutput run(VM* vm) {
                 tableGet(&vm->database->table, key, &value);
 
                 return INTERPRET_RESULT(OBJ_VAL(valueTypeName(value)));
+            }
+            case OP_EXISTS: {
+                uint8_t count = READ_BYTE();
+                double result = 0;
+                Value v;
+                while (count--) {
+                    if (tableGet(&vm->database->table, READ_STRING(), &v)) {
+                        result++;
+                    }
+                }
+                return INTERPRET_RESULT(NUMBER_VAL(result));
             }
             case OP_RETURN:
                 return INTERPRET_OK();
