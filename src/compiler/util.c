@@ -57,3 +57,13 @@ void emitBytes(Compiler* compiler, uint8_t byte1, uint8_t byte2) {
     emitByte(compiler, byte1);
     emitByte(compiler, byte2);
 }
+
+int emitPlaceHolderByte(Compiler* compiler) {
+    int offset = currentChunk(compiler)->count;
+    emitByte(compiler, 0);  // placeholder
+    return offset;
+}
+
+void patchByte(Compiler* compiler, int offset, uint8_t newByte) {
+    currentChunk(compiler)->code[offset] = newByte;
+}
