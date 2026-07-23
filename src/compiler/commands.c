@@ -22,6 +22,7 @@ static void keysCommand(Compiler* compiler) {
 }
 
 static void exitCommand(Compiler* compiler) { emitByte(compiler, OP_EXIT); }
+static void quitCommand(Compiler* compiler) { emitByte(compiler, OP_EXIT); }
 
 static void pingCommand(Compiler* compiler) { emitByte(compiler, OP_PING); }
 
@@ -29,6 +30,7 @@ CommandFn commandTable[] = {
     [TOKEN_GET] = getCommand,   [TOKEN_SET] = setCommand,
     [TOKEN_DEL] = delCommand,   [TOKEN_KEYS] = keysCommand,
     [TOKEN_EXIT] = exitCommand, [TOKEN_PING] = pingCommand,
+    [TOKEN_QUIT] = quitCommand,
 };
 
 const size_t commandTableSize = sizeof(commandTable) / sizeof(commandTable[0]);
