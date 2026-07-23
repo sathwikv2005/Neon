@@ -1,5 +1,9 @@
 #include "compiler_common.h"
 
+#define IS_CONSTANT()                         \
+    (check(compiler->parser, TOKEN_STRING) || \
+     check(compiler->parser, TOKEN_NUMBER))
+
 static void getCommand(Compiler* compiler) {
     emitByte(compiler, OP_GET);
     parseKey(compiler, "expect a key after 'GET'");
@@ -21,6 +25,22 @@ static void keysCommand(Compiler* compiler) {
     // TODO: need to take in a string as pattern and need to emit it
 }
 
+static void existsCommand(Compiler* compiler) {
+    emitByte(compiler, OP_EXISTS);
+    int offset = emitPlaceHolderByte(compiler);
+    uint8_t count = 0;
+    while (check(compiler->parser, TOKEN_STRING)) {
+        if (count == UINT8_MAX) {
+            error(compiler, "Too many arguments.");
+        }
+        parseKey(compiler, "Expect a key.");
+        count++;
+    }
+    if (count == 0) {
+        error(compiler, "EXISTS expects at least 1 key");
+    }
+    patchByte(compiler, offset, count);
+}
 static void typeCommand(Compiler* compiler) {
     emitByte(compiler, OP_TYPE);
     parseKey(compiler, "expect a key after 'TYPE'");
@@ -40,6 +60,7 @@ CommandFn commandTable[] = {
     [TOKEN_EXIT] = exitCommand,     [TOKEN_PING] = pingCommand,
     [TOKEN_QUIT] = quitCommand,     [TOKEN_DBSIZE] = DBSizeCommand,
     [TOKEN_FLUSH] = flushDBCommand, [TOKEN_TYPE] = typeCommand,
+    [TOKEN_EXISTS] = existsCommand,
 };
 
 const size_t commandTableSize = sizeof(commandTable) / sizeof(commandTable[0]);
