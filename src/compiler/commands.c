@@ -21,8 +21,13 @@ static void keysCommand(Compiler* compiler) {
     // TODO: need to take in a string as pattern and need to emit it
 }
 
+static void typeCommand(Compiler* compiler) {
+    emitByte(compiler, OP_TYPE);
+    parseKey(compiler, "expect a key after 'TYPE'");
+}
+
 static void DBSizeCommand(Compiler* compiler) { emitByte(compiler, OP_DBSIZE); }
-static void FlushDBCommand(Compiler* compiler) { emitByte(compiler, OP_FLUSH); }
+static void flushDBCommand(Compiler* compiler) { emitByte(compiler, OP_FLUSH); }
 
 static void exitCommand(Compiler* compiler) { emitByte(compiler, OP_EXIT); }
 static void quitCommand(Compiler* compiler) { emitByte(compiler, OP_EXIT); }
@@ -34,7 +39,7 @@ CommandFn commandTable[] = {
     [TOKEN_DEL] = delCommand,       [TOKEN_KEYS] = keysCommand,
     [TOKEN_EXIT] = exitCommand,     [TOKEN_PING] = pingCommand,
     [TOKEN_QUIT] = quitCommand,     [TOKEN_DBSIZE] = DBSizeCommand,
-    [TOKEN_FLUSH] = FlushDBCommand,
+    [TOKEN_FLUSH] = flushDBCommand, [TOKEN_TYPE] = typeCommand,
 };
 
 const size_t commandTableSize = sizeof(commandTable) / sizeof(commandTable[0]);
