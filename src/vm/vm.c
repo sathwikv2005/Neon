@@ -128,7 +128,14 @@ static InterpretOutput run(VM* vm) {
                 freeTable(&vm->database->table);
                 return INTERPRET_OK();
             }
+            case OP_TYPE: {
+                ObjString* key = READ_STRING();
+                Value value = NULL_VAL;
 
+                tableGet(&vm->database->table, key, &value);
+
+                return INTERPRET_RESULT(OBJ_VAL(valueTypeName(value)));
+            }
             case OP_RETURN:
                 return INTERPRET_OK();
             case OP_EXIT:
