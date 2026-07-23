@@ -119,6 +119,11 @@ static InterpretOutput run(VM* vm) {
                 return INTERPRET_RESULT(OBJ_VAL(list));
             }
 
+            case OP_DBSIZE: {
+                Value value = NUMBER_VAL((double)vm->database->table.size);
+                return INTERPRET_RESULT(value);
+            }
+
             case OP_RETURN:
                 return INTERPRET_OK();
             case OP_EXIT:
