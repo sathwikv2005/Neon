@@ -124,6 +124,11 @@ static InterpretOutput run(VM* vm) {
                 return INTERPRET_RESULT(value);
             }
 
+            case OP_FLUSH: {
+                freeTable(&vm->database->table);
+                return INTERPRET_OK();
+            }
+
             case OP_RETURN:
                 return INTERPRET_OK();
             case OP_EXIT:
