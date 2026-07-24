@@ -11,5 +11,6 @@ typedef struct Client {
 } Client;
 
 void initClient(Client* client, ClientType type);
+void freeClient(Client* client);
 
 #endif

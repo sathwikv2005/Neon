@@ -3,11 +3,12 @@
 #include "../include/memory.h"
 #include "logger.h"
 
-Engine* createEngine() {
+Engine* createEngine(ClientType type) {
     Engine* engine = malloc(sizeof(Engine));
     if (engine == NULL) return NULL;
 
     initvm(&engine->vm);
+    initClient(&engine->client, type);
 
     // TODO: take database id as input from user and pass here. Default = 0
     uint8_t id = 0;
@@ -30,5 +31,6 @@ void freeEngine(Engine* engine) {
                   (unsigned)db->id);
     }
     freevm(&engine->vm);
+    freeClient(&engine->client);
     free(engine);
 }
