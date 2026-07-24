@@ -3,15 +3,13 @@
 #include "../include/memory.h"
 #include "logger.h"
 
-Engine* createEngine(ClientType type) {
+Engine* createEngine(ClientType type, uint8_t id) {
     Engine* engine = malloc(sizeof(Engine));
     if (engine == NULL) return NULL;
 
     initvm(&engine->vm);
     initClient(&engine->client, type);
 
-    // TODO: take database id as input from user and pass here. Default = 0
-    uint8_t id = 0;
     Database* database = loadDatabase(id);
     if (database == NULL) {
         LOG_ERROR("Unable to load database(%u)", (unsigned)id);

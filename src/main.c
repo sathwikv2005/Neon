@@ -50,7 +50,10 @@ static void repl() {
         printBanner();
     }
     char line[1024];
-    Engine* engine = createEngine();
+
+    // TODO: take database id as input from user and pass here. Default = 0
+    uint8_t id = 0;
+    Engine* engine = createEngine(CLIENT_REPL, id);
     if (engine == NULL) {
         printf(
             "Failed to start a repl session please check the log file for "
