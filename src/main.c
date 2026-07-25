@@ -69,6 +69,7 @@ static void repl() {
             break;
         }
 
+        // TODO: let engine handle interpret and respond based on client type
         InterpretOutput result = interpret(line, &engine->vm);
 
         switch (result.status) {
