@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "engine.h"
+#include "logger.h"
 #include "vm.h"
 
 void initClient(Client* client, ClientType type) { client->type = type; }
@@ -55,5 +56,6 @@ bool respond(Engine* engine, InterpretOutput result) {
         case CLIENT_RESP:
             return respondRESP(engine, result);
     }
+    LOG_FATAL("Invalid client type: %d", (int)engine->client.type);
     return false;
 }
