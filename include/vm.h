@@ -47,7 +47,7 @@ typedef enum {
     INTERPRET_EXIT
 } InterpretResult;
 
-typedef struct {
+typedef struct InterpretOutput {
     InterpretResult status;
     bool hasValue;
     Value value;

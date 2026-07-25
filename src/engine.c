@@ -13,6 +13,7 @@ Engine* createEngine(ClientType type, uint8_t id) {
     Database* database = loadDatabase(id);
     if (database == NULL) {
         LOG_ERROR("Unable to load database(%u)", (unsigned)id);
+        free(engine);
         return NULL;
     }
 
@@ -31,4 +32,8 @@ void freeEngine(Engine* engine) {
     freevm(&engine->vm);
     freeClient(&engine->client);
     free(engine);
+}
+
+InterpretOutput execute(Engine* engine, const char* line) {
+    return interpret(line, &engine->vm);
 }

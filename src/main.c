@@ -69,35 +69,9 @@ static void repl() {
             break;
         }
 
-        // TODO: let engine handle interpret and respond based on client type
-        InterpretOutput result = interpret(line, &engine->vm);
-
-        switch (result.status) {
-            case INTERPRET_COMPILE_ERROR:
-                fprintf(stderr,
-                        ANSI_BOLD ANSI_RED "Syntax error: " ANSI_RESET "%s\n",
-                        engine->vm.error);
-                break;
-
-            case INTERPRET_RUNTIME_ERROR:
-                fprintf(stderr,
-                        ANSI_BOLD ANSI_RED "Command error: " ANSI_RESET "%s\n",
-                        engine->vm.error);
-                break;
-
-            case INTERPRET_EXIT:
-                freeEngine(engine);
-                return;
-
-            case INTERPRET_OK:
-                if (!result.hasValue) {
-                    printf("OK\n");
-                    break;
-                }
-                printValue(result.value);
-                printf("\n");
-                break;
-        }
+        InterpretOutput result = execute(engine, line);
+        if (result.status == INTERPRET_EXIT) break;
+        if (!respond(engine, result)) break;
     }
     freeEngine(engine);
 }

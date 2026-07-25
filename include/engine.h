@@ -6,12 +6,14 @@
 #include "table.h"
 #include "vm.h"
 
-typedef struct {
+typedef struct Engine {
     VM vm;
     Client client;
 } Engine;
 
 Engine* createEngine(ClientType type, uint8_t id);
 void freeEngine(Engine* engine);
+
+InterpretOutput execute(Engine* engine, char* line);
 
 #endif
