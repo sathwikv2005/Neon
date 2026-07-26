@@ -14,6 +14,6 @@ typedef struct Engine {
 Engine* createEngine(ClientType type, uint8_t id);
 void freeEngine(Engine* engine);
 
-InterpretOutput execute(Engine* engine, char* line);
+InterpretOutput execute(Engine* engine, const char* line);
 
 #endif
