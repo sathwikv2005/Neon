@@ -71,7 +71,12 @@ static void repl() {
 
         InterpretOutput result = execute(engine, line);
         if (result.status == INTERPRET_EXIT) break;
-        if (!respond(engine, result)) break;
+
+        if (!respond(engine, result)) {
+            LOG_ERROR("Failed to send response to %s client.",
+                      engine->client.type == CLIENT_REPL ? "REPL" : "RESP");
+            break;
+        }
     }
     freeEngine(engine);
 }
