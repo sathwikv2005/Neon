@@ -2,6 +2,7 @@
 
 #include "compiler.h"
 #include "debug.h"
+#include "logger.h"
 #include "vm_common.h"
 
 // return exit back to the engine
@@ -147,6 +148,29 @@ static InterpretOutput run(VM* vm) {
                 }
                 return INTERPRET_RESULT(NUMBER_VAL(result));
             }
+            case OP_RENAME: {
+                ObjString* key = READ_STRING();
+                ObjString* newKey = READ_STRING();
+                Value value = NULL_VAL;
+
+                if (!tableGet(&vm->database->table, key, &value)) {
+                    RUNTIME_ERROR("Failed to rename %s. It does not exist.",
+                                  key->chars);
+                }
+                if (!tableSet(&vm->database->table, newKey, value)) {
+                    LOG_ERROR("setting key %s failed", newKey->chars);
+                    RUNTIME_ERROR("Failed to rename %s to %s.", key->chars,
+                                  newKey->chars);
+                }
+                if (!tableDelete(&vm->database->table, key)) {
+                    LOG_ERROR("Deleting key %s failed", key->chars);
+                    RUNTIME_ERROR("Failed to rename %s to %s.", key->chars,
+                                  newKey->chars);
+                }
+
+                return INTERPRET_OK();
+            }
+
             case OP_RETURN:
                 return INTERPRET_OK();
             case OP_EXIT:
