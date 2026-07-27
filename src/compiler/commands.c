@@ -45,6 +45,11 @@ static void typeCommand(Compiler* compiler) {
     emitByte(compiler, OP_TYPE);
     parseKey(compiler, "expect a key after 'TYPE'");
 }
+static void renameCommand(Compiler* compiler) {
+    emitByte(compiler, OP_RENAME);
+    parseKey(compiler, "expect old key after 'RENAME'");
+    parseKey(compiler, "expect new key after old key");
+}
 
 static void DBSizeCommand(Compiler* compiler) { emitByte(compiler, OP_DBSIZE); }
 static void flushDBCommand(Compiler* compiler) { emitByte(compiler, OP_FLUSH); }
@@ -60,7 +65,7 @@ CommandFn commandTable[] = {
     [TOKEN_EXIT] = exitCommand,     [TOKEN_PING] = pingCommand,
     [TOKEN_QUIT] = quitCommand,     [TOKEN_DBSIZE] = DBSizeCommand,
     [TOKEN_FLUSH] = flushDBCommand, [TOKEN_TYPE] = typeCommand,
-    [TOKEN_EXISTS] = existsCommand,
+    [TOKEN_EXISTS] = existsCommand, [TOKEN_RENAME] = renameCommand,
 };
 
 const size_t commandTableSize = sizeof(commandTable) / sizeof(commandTable[0]);
