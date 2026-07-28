@@ -56,7 +56,10 @@ static void flushDBCommand(Compiler* compiler) { emitByte(compiler, OP_FLUSH); }
 
 static void exitCommand(Compiler* compiler) { emitByte(compiler, OP_EXIT); }
 static void quitCommand(Compiler* compiler) { emitByte(compiler, OP_EXIT); }
-
+static void echoCommand(Compiler* compiler) {
+    emitByte(compiler, OP_ECHO);
+    parseValue(compiler, "Expect a value after 'ECHO'");
+}
 static void pingCommand(Compiler* compiler) { emitByte(compiler, OP_PING); }
 
 CommandFn commandTable[] = {
