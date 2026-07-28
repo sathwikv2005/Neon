@@ -102,13 +102,6 @@ static InterpretOutput run(VM* vm) {
                 return INTERPRET_OK();
             }
 
-            case OP_PING: {
-                // TODO: maybe should return "PONG" in the furture.
-                //  to do that will need to intern "PONG" at startup as a
-                //  special string
-                return INTERPRET_OK();
-            }
-
             case OP_KEYS: {
                 Entry* entries = tableEntries(&vm->database->table);
                 int size = vm->database->table.size;
@@ -173,6 +166,16 @@ static InterpretOutput run(VM* vm) {
 
             case OP_RETURN:
                 return INTERPRET_OK();
+
+            case OP_PING: {
+                // TODO: maybe should return "PONG" in the furture.
+                //  to do that will need to intern "PONG" at startup as a
+                //  special string
+                return INTERPRET_OK();
+            }
+            case OP_ECHO: {
+                return INTERPRET_RESULT(READ_CONSTANT());
+            }
             case OP_EXIT:
                 return INTERPRET_EXIT();
             default:
