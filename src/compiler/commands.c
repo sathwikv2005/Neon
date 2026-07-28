@@ -69,6 +69,7 @@ CommandFn commandTable[] = {
     [TOKEN_QUIT] = quitCommand,     [TOKEN_DBSIZE] = DBSizeCommand,
     [TOKEN_FLUSH] = flushDBCommand, [TOKEN_TYPE] = typeCommand,
     [TOKEN_EXISTS] = existsCommand, [TOKEN_RENAME] = renameCommand,
+    [TOKEN_ECHO] = echoCommand,
 };
 
 const size_t commandTableSize = sizeof(commandTable) / sizeof(commandTable[0]);
