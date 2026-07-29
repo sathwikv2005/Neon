@@ -45,15 +45,13 @@ static void printBanner() {
     printf(ANSI_RESET);
 }
 
-static void repl() {
+static void repl(uint8_t databaseId) {
     if (isatty(fileno(stdin))) {
         printBanner();
     }
     char line[1024];
 
-    // TODO: take database id as input from user and pass here. Default = 0
-    uint8_t id = 0;
-    Engine* engine = createEngine(CLIENT_REPL, id);
+    Engine* engine = createEngine(CLIENT_REPL, databaseId);
     if (engine == NULL) {
         printf(
             "Failed to start a repl session please check the log file for "
@@ -81,17 +79,67 @@ static void repl() {
     freeEngine(engine);
 }
 
+static void serverSession() { return; }
+
+static void usage(const char* program) {
+    printf("Usage:\n");
+    printf("  %s                 Start server\n", program);
+    printf("  %s --server        Start server\n", program);
+    printf("  %s --repl          Start REPL\n", program);
+    printf("  %s --repl --db N   Start REPL using database N\n", program);
+    printf("  %s --repl -d N     Same as above\n", program);
+}
+
 int main(int argc, const char* argv[]) {
     signal(SIGINT, handleSigInt);
-    initServer();
 
     if (!initLogger(LOG_FILE_PATH)) {
-        printf("failed to initilize the logger\n");
+        printf("failed to initialize the logger\n");
         return 1;
     }
-    repl();
-    closeLogger();
 
+    initServer();
+
+    bool startRepl = false;
+    uint8_t databaseId = 0;
+
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--repl") == 0) {
+            startRepl = true;
+        } else if (strcmp(argv[i], "--server") == 0) {
+            startRepl = false;
+        } else if (strcmp(argv[i], "--db") == 0 || strcmp(argv[i], "-d") == 0) {
+            if (++i >= argc) {
+                fprintf(stderr, "Missing database id.\n");
+                usage("neon");
+                goto cleanup;
+            }
+
+            char* end;
+            long value = strtol(argv[i], &end, 10);
+
+            if (*end != '\0' || value < 0 || value >= MAX_DATABASE) {
+                fprintf(stderr, "Database id must be between 0 and %d.\n",
+                        MAX_DATABASE - 1);
+                goto cleanup;
+            }
+
+            databaseId = (uint8_t)value;
+        } else {
+            fprintf(stderr, "Unknown option: %s\n", argv[i]);
+            usage("neon");
+            goto cleanup;
+        }
+    }
+
+    if (startRepl) {
+        repl(databaseId);
+    } else {
+        serverSession();  // or startServer()
+    }
+
+cleanup:
+    closeLogger();
     freeServer();
     return 0;
 }
