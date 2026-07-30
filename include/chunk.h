@@ -22,6 +22,7 @@ typedef enum {
     OP_TYPE,
 
     // database management
+    OP_SELECT,
     OP_FLUSH,
     OP_DBSIZE,
 
