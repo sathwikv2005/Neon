@@ -24,6 +24,7 @@ typedef enum {
     TOKEN_TYPE,
 
     // DB management
+    TOKEN_SELECT,
     TOKEN_FLUSH,
     TOKEN_DBSIZE,
 

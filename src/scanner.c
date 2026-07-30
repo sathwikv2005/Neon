@@ -170,7 +170,15 @@ static TokenType wordType() {
         case 'R':
             return checkKeyword(1, 5, "ENAME", TOKEN_RENAME);
         case 'S':
-            return checkKeyword(1, 2, "ET", TOKEN_SET);
+            if (scanner.current - scanner.start > 1) {
+                switch (scanner.start[1]) {
+                    case 'E':
+                        if (scanner.current - scanner.start == 3)
+                            return checkKeyword(2, 1, "T", TOKEN_SET);
+                        return checkKeyword(2, 4, "LECT", TOKEN_SELECT);
+                }
+            }
+            break;
         case 'T':
             return checkKeyword(1, 3, "YPE", TOKEN_TYPE);
     }
