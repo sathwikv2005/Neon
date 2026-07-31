@@ -113,6 +113,32 @@ static InterpretOutput run(VM* vm) {
                 return INTERPRET_RESULT(OBJ_VAL(list));
             }
 
+            case OP_SELECT: {
+                Value idValue = READ_CONSTANT();
+                if (!IS_NUMBER(idValue)) {
+                    RUNTIME_ERROR("id must be an integer from 0 to %d",
+                                  MAX_DATABASE - 1);
+                }
+                double id = AS_NUMBER(idValue);
+                if (id < 0 || id >= MAX_DATABASE || id != (uint8_t)id) {
+                    RUNTIME_ERROR("id must be an integer from 0 to %d",
+                                  MAX_DATABASE - 1);
+                }
+                if (vm->database->id == (uint8_t)id) {
+                    return INTERPRET_OK();
+                }
+
+                Database* newDatabase = loadDatabase((uint8_t)id);
+                if (newDatabase == NULL) {
+                    LOG_ERROR("Unable to load database(%u)", (unsigned)id);
+                    RUNTIME_ERROR("Unable to load database(%u)", (unsigned)id);
+                }
+                Database* oldDatabase = vm->database;
+                vm->database = newDatabase;
+                unloadDatabase(oldDatabase);
+
+                return INTERPRET_OK();
+            }
             case OP_DBSIZE: {
                 Value value = NUMBER_VAL((double)vm->database->table.size);
                 return INTERPRET_RESULT(value);
