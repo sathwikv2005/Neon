@@ -52,7 +52,7 @@ static void renameCommand(Compiler* compiler) {
 }
 
 static void selectCommand(Compiler* compiler) {
-    emitByte(compile, OP_SELECT);
+    emitByte(compiler, OP_SELECT);
     parseValue(compiler, "Expect a id after 'SELECT");
 }
 static void DBSizeCommand(Compiler* compiler) { emitByte(compiler, OP_DBSIZE); }
