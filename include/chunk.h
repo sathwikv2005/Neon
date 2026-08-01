@@ -10,6 +10,10 @@ typedef enum {
     OP_ECHO,
     OP_QUIT,
 
+    // number op
+    OP_INCR,
+    OP_DECR,
+
     // CRUD operations
     OP_SET,
     OP_GET,
@@ -25,6 +29,10 @@ typedef enum {
     OP_SELECT,
     OP_FLUSH,
     OP_DBSIZE,
+    OP_SAVE,
+
+    // server
+    OP_INFO,
 
     // VM management
     OP_EXIT,
