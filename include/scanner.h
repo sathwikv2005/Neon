@@ -12,6 +12,10 @@ typedef enum {
     TOKEN_QUIT,
     TOKEN_EXIT,
 
+    // number operations
+    TOKEN_INCR,
+    TOKEN_DECR,
+
     // CRUD Op
     TOKEN_SET,
     TOKEN_GET,
@@ -27,6 +31,10 @@ typedef enum {
     TOKEN_SELECT,
     TOKEN_FLUSH,
     TOKEN_DBSIZE,
+    TOKEN_SAVE,
+
+    // Server
+    TOKEN_INFO,
 
     TOKEN_COMMANDS_END,
 

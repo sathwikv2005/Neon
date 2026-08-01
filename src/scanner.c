@@ -139,17 +139,22 @@ static TokenType wordType() {
             if (scanner.current - scanner.start > 1) {
                 switch (scanner.start[1]) {
                     case 'E':
-                        return checkKeyword(2, 1, "L", TOKEN_DEL);
+                        if (scanner.current - scanner.start == 3)
+                            return checkKeyword(2, 1, "L", TOKEN_DEL);
+                        return checkKeyword(2, 2, "CR", TOKEN_DECR);
+
                     case 'B':
                         return checkKeyword(2, 4, "SIZE", TOKEN_DBSIZE);
                 }
             }
             break;
+
         case 'E':
             if (scanner.current - scanner.start > 1) {
                 switch (scanner.start[1]) {
                     case 'C':
                         return checkKeyword(2, 2, "HO", TOKEN_ECHO);
+
                     case 'X':
                         if (scanner.current - scanner.start == 4)
                             return checkKeyword(2, 2, "IT", TOKEN_EXIT);
@@ -157,21 +162,42 @@ static TokenType wordType() {
                 }
             }
             break;
+
         case 'F':
             return checkKeyword(1, 6, "LUSHDB", TOKEN_FLUSH);
+
         case 'G':
             return checkKeyword(1, 2, "ET", TOKEN_GET);
+
+        case 'I':
+            if (scanner.current - scanner.start > 1) {
+                switch (scanner.start[1]) {
+                    case 'N':
+                        if (scanner.current - scanner.start == 4)
+                            return checkKeyword(2, 2, "FO", TOKEN_INFO);
+                        return checkKeyword(2, 2, "CR", TOKEN_INCR);
+                }
+            }
+            break;
+
         case 'K':
             return checkKeyword(1, 3, "EYS", TOKEN_KEYS);
+
         case 'P':
             return checkKeyword(1, 3, "ING", TOKEN_PING);
+
         case 'Q':
             return checkKeyword(1, 3, "UIT", TOKEN_QUIT);
+
         case 'R':
             return checkKeyword(1, 5, "ENAME", TOKEN_RENAME);
+
         case 'S':
             if (scanner.current - scanner.start > 1) {
                 switch (scanner.start[1]) {
+                    case 'A':
+                        return checkKeyword(2, 2, "VE", TOKEN_SAVE);
+
                     case 'E':
                         if (scanner.current - scanner.start == 3)
                             return checkKeyword(2, 1, "T", TOKEN_SET);
@@ -179,10 +205,11 @@ static TokenType wordType() {
                 }
             }
             break;
+
         case 'T':
             return checkKeyword(1, 3, "YPE", TOKEN_TYPE);
     }
-    // Anything not a number of keyword is a string
+
     return TOKEN_STRING;
 }
 
