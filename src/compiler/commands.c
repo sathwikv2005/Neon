@@ -4,6 +4,11 @@
     (check(compiler->parser, TOKEN_STRING) || \
      check(compiler->parser, TOKEN_NUMBER))
 
+static void incrCommand(Compiler* compiler) {
+    emitByte(compiler, OP_INCR);
+    parseKey(compiler, "Expect key after 'INCR'");
+}
+
 static void getCommand(Compiler* compiler) {
     emitByte(compiler, OP_GET);
     parseKey(compiler, "expect a key after 'GET'");
@@ -74,6 +79,7 @@ CommandFn commandTable[] = {
     [TOKEN_FLUSH] = flushDBCommand, [TOKEN_SELECT] = selectCommand,
     [TOKEN_TYPE] = typeCommand,     [TOKEN_EXISTS] = existsCommand,
     [TOKEN_RENAME] = renameCommand, [TOKEN_ECHO] = echoCommand,
+    [TOKEN_INCR] = incrCommand,
 };
 
 const size_t commandTableSize = sizeof(commandTable) / sizeof(commandTable[0]);
