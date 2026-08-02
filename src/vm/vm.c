@@ -102,6 +102,22 @@ static InterpretOutput run(VM* vm) {
                 return INTERPRET_OK();
             }
 
+            case OP_INCR: {
+                ObjString* key = READ_STRING();
+                Value value;
+                if (!tableGet(&vm->database->table, key, &value)) {
+                    tableSet(&vm->database->table, key, NUMBER_VAL(1));
+                    return INTERPRET_OK();
+                }
+                if (!IS_NUMBER(value)) {
+                    RUNTIME_ERROR("Value must be a number.");
+                }
+                double num = AS_NUMBER(value);
+                num++;
+                tableSet(&vm->database->table, key, NUMBER_VAL(num));
+                return INTERPRET_OK();
+            }
+
             case OP_KEYS: {
                 Entry* entries = tableEntries(&vm->database->table);
                 int size = vm->database->table.size;
@@ -135,6 +151,7 @@ static InterpretOutput run(VM* vm) {
                 }
                 Database* oldDatabase = vm->database;
                 vm->database = newDatabase;
+                oldDatabase->clients--;
                 unloadDatabase(oldDatabase);
 
                 return INTERPRET_OK();
