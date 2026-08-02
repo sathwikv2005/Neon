@@ -170,12 +170,13 @@ static TokenType wordType() {
             return checkKeyword(1, 2, "ET", TOKEN_GET);
 
         case 'I':
-            if (scanner.current - scanner.start > 1) {
-                switch (scanner.start[1]) {
-                    case 'N':
-                        if (scanner.current - scanner.start == 4)
-                            return checkKeyword(2, 2, "FO", TOKEN_INFO);
-                        return checkKeyword(2, 2, "CR", TOKEN_INCR);
+            if (scanner.current - scanner.start > 2) {
+                switch (scanner.start[2]) {
+                    case 'F':
+                        return checkKeyword(3, 1, "O", TOKEN_INFO);
+
+                    case 'C':
+                        return checkKeyword(3, 1, "R", TOKEN_INCR);
                 }
             }
             break;
