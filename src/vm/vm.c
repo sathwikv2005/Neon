@@ -180,6 +180,16 @@ static InterpretOutput run(VM* vm) {
                 freeTable(&vm->database->table);
                 return INTERPRET_OK();
             }
+
+            case OP_SAVE: {
+                if (!saveDatabase(vm->database)) {
+                    RUNTIME_ERROR(
+                        "Failed to save database. Check the log file for more "
+                        "info.");
+                }
+                return INTERPRET_OK();
+            }
+
             case OP_TYPE: {
                 ObjString* key = READ_STRING();
                 Value value = NULL_VAL;
