@@ -66,6 +66,7 @@ static void selectCommand(Compiler* compiler) {
 }
 static void DBSizeCommand(Compiler* compiler) { emitByte(compiler, OP_DBSIZE); }
 static void flushDBCommand(Compiler* compiler) { emitByte(compiler, OP_FLUSH); }
+static void saveCommand(Compiler* compiler) { emitByte(compiler, OP_SAVE); }
 
 static void exitCommand(Compiler* compiler) { emitByte(compiler, OP_EXIT); }
 static void quitCommand(Compiler* compiler) { emitByte(compiler, OP_EXIT); }
@@ -80,10 +81,11 @@ CommandFn commandTable[] = {
     [TOKEN_DEL] = delCommand,       [TOKEN_KEYS] = keysCommand,
     [TOKEN_EXIT] = exitCommand,     [TOKEN_PING] = pingCommand,
     [TOKEN_QUIT] = quitCommand,     [TOKEN_DBSIZE] = DBSizeCommand,
-    [TOKEN_FLUSH] = flushDBCommand, [TOKEN_SELECT] = selectCommand,
-    [TOKEN_TYPE] = typeCommand,     [TOKEN_EXISTS] = existsCommand,
-    [TOKEN_RENAME] = renameCommand, [TOKEN_ECHO] = echoCommand,
-    [TOKEN_INCR] = incrCommand,     [TOKEN_DECR] = decrCommand,
+    [TOKEN_FLUSH] = flushDBCommand, [TOKEN_SAVE] = saveCommand,
+    [TOKEN_SELECT] = selectCommand, [TOKEN_TYPE] = typeCommand,
+    [TOKEN_EXISTS] = existsCommand, [TOKEN_RENAME] = renameCommand,
+    [TOKEN_ECHO] = echoCommand,     [TOKEN_INCR] = incrCommand,
+    [TOKEN_DECR] = decrCommand,
 };
 
 const size_t commandTableSize = sizeof(commandTable) / sizeof(commandTable[0]);
