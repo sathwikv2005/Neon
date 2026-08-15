@@ -107,7 +107,7 @@ static InterpretOutput run(VM* vm) {
                 Value value;
                 if (!tableGet(&vm->database->table, key, &value)) {
                     tableSet(&vm->database->table, key, NUMBER_VAL(1));
-                    return INTERPRET_OK();
+                    return INTERPRET_RESULT(NUMBER_VAL(1));
                 }
                 if (!IS_NUMBER(value)) {
                     RUNTIME_ERROR("Value must be a number.");
@@ -115,7 +115,7 @@ static InterpretOutput run(VM* vm) {
                 double num = AS_NUMBER(value);
                 num++;
                 tableSet(&vm->database->table, key, NUMBER_VAL(num));
-                return INTERPRET_OK();
+                return INTERPRET_RESULT(NUMBER_VAL(num));
             }
             case OP_DECR: {
                 ObjString* key = READ_STRING();
