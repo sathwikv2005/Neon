@@ -1,5 +1,6 @@
 #include "server.h"
 
+#include "logger.h"
 #include "socket.h"
 
 Server server;
