@@ -98,6 +98,7 @@ int main(int argc, const char* argv[]) {
         return 1;
     }
 
+    // TODO: log and exit if initServer() fails.
     initServer();
 
     bool startRepl = false;
