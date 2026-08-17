@@ -37,12 +37,18 @@ function(setup_neon_target target)
         "${PROJECT_SOURCE_DIR}/include"
         "${CMAKE_BINARY_DIR}/generated/include"
     )
+
+    if(WIN32)
+        target_link_libraries(${target} PRIVATE ws2_32)
+    endif()
 endfunction()
+
 
 setup_neon_target(release)
 setup_neon_target(neon)
 setup_neon_target(debug)
 setup_neon_target(profiler)
+
 
 if(MSVC)
     target_compile_options(release PRIVATE /O2 /GL)
