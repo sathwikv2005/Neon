@@ -13,3 +13,13 @@ void freeSockets() {
     WSACleanup();
 #endif
 }
+
+Socket createSocket() {
+    Socket socketFd = socket(AF_INET, SOCK_STREAM, 0);
+
+    if (socketFd == INVALID_SOCKET_VALUE) {
+        return INVALID_SOCKET_VALUE;
+    }
+
+    return socketFd;
+}
