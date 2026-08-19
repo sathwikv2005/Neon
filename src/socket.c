@@ -15,6 +15,7 @@ void freeSockets() {
 }
 
 Socket createSocket() {
+    // IPv4 TCP connection
     Socket socketFd = socket(AF_INET, SOCK_STREAM, 0);
 
     if (socketFd == INVALID_SOCKET_VALUE) {
@@ -22,4 +23,15 @@ Socket createSocket() {
     }
 
     return socketFd;
+}
+
+bool bindSocket(Socket socketFd, uint16_t port) {
+    struct sockaddr_in address = {
+        .sin_family = AF_INET,  // IPv4 address type
+        .sin_addr.s_addr = htonl(
+            INADDR_ANY),  // listen on all available local network interfaces.
+        .sin_port = htons(port),
+    };
+
+    return bind(socketFd, (struct sockaddr*)&address, sizeof(address)) == 0;
 }
