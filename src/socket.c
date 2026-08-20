@@ -35,3 +35,7 @@ bool bindSocket(Socket socketFd, uint16_t port) {
 
     return bind(socketFd, (struct sockaddr*)&address, sizeof(address)) == 0;
 }
+
+bool listenSocket(Socket socketFd) {
+    return listen(socketFd, SOCKET_BACKLOG) == 0;
+}
