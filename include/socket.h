@@ -3,6 +3,8 @@
 
 #include "common.h"
 
+#define SOCKET_BACKLOG 128
+
 #ifdef _WIN32
 
 #include <winsock2.h>
