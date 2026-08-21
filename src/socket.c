@@ -39,3 +39,5 @@ bool bindSocket(Socket socketFd, uint16_t port) {
 bool listenSocket(Socket socketFd) {
     return listen(socketFd, SOCKET_BACKLOG) == 0;
 }
+
+Socket acceptSocket(Socket socketFd) { return accept(socketFd, NULL, NULL); }
