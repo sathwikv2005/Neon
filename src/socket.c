@@ -41,3 +41,11 @@ bool listenSocket(Socket socketFd) {
 }
 
 Socket acceptSocket(Socket socketFd) { return accept(socketFd, NULL, NULL); }
+
+void closeSocket(Socket socketFd) {
+#ifdef _WIN32
+    closesocket(socketFd);
+#else
+    close(socketFd);
+#endif
+}
