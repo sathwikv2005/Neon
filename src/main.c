@@ -20,7 +20,6 @@ volatile sig_atomic_t shouldExit = 0;
 
 static void handleSigInt(int sig) {
     (void)sig;
-    signal(SIGINT, SIG_IGN);  // ignore further Ctrl+C presses.
     shouldExit = 1;
 }
 
@@ -54,12 +53,15 @@ static void repl(uint8_t databaseId) {
     Engine* engine = createEngine(CLIENT_REPL, databaseId);
     if (engine == NULL) {
         printf(
-            "Failed to start a repl session please check the log file for "
-            "errors.");
+            "Failed to start a repl session. Please check the log file for "
+            "errors.\n");
         return;
     }
     for (;;) {
-        if (shouldExit) break;
+        if (shouldExit) {
+            break;
+        }
+
         printf("> ");
 
         if (!fgets(line, sizeof(line), stdin)) {
@@ -68,7 +70,10 @@ static void repl(uint8_t databaseId) {
         }
 
         InterpretOutput result = execute(engine, line);
-        if (result.status == INTERPRET_EXIT) break;
+
+        if (result.status == INTERPRET_EXIT) {
+            break;
+        }
 
         if (!respond(engine, result)) {
             LOG_ERROR("Failed to send response to %s client.",
@@ -76,10 +81,66 @@ static void repl(uint8_t databaseId) {
             break;
         }
     }
+
     freeEngine(engine);
 }
 
-static void serverSession() { return; }
+static bool serverSession() {
+    LOG_INFO("Creating server socket.");
+
+    Socket server = createSocket();
+
+    if (server == INVALID_SOCKET_VALUE) {
+        LOG_ERROR("Failed to create server socket.");
+        return false;
+    }
+
+    LOG_DEBUG("Server socket created.");
+
+    if (!bindSocket(server, 6379)) {
+        LOG_ERROR("Failed to bind server socket to port %d.", 6379);
+        closeSocket(server);
+        return false;
+    }
+
+    LOG_INFO("Server socket bound to port %d.", 6379);
+
+    if (!listenSocket(server)) {
+        LOG_ERROR("Failed to listen on server socket.");
+        closeSocket(server);
+        return false;
+    }
+
+    LOG_INFO("Server listening on port %d.", 6379);
+
+    printBanner();
+
+    while (!shouldExit) {
+        LOG_DEBUG("Waiting for client connection.");
+
+        Socket client = acceptSocket(server);
+
+        if (client == INVALID_SOCKET_VALUE) {
+            if (shouldExit) {
+                break;
+            }
+
+            LOG_ERROR("Failed to accept client connection.");
+            closeSocket(server);
+            return false;
+        }
+
+        LOG_INFO("Client connection accepted.");
+
+        closeSocket(client);
+    }
+
+    LOG_INFO("Stopping server.");
+
+    closeSocket(server);
+
+    return true;
+}
 
 static void usage(const char* program) {
     printf("Usage:\n");
@@ -94,7 +155,7 @@ int main(int argc, const char* argv[]) {
     signal(SIGINT, handleSigInt);
 
     if (!initLogger(LOG_FILE_PATH)) {
-        printf("failed to initialize the logger\n");
+        printf("Failed to initialize the logger.\n");
         return 1;
     }
 
@@ -135,12 +196,14 @@ int main(int argc, const char* argv[]) {
 
     if (startRepl) {
         repl(databaseId);
-    } else {
-        serverSession();  // or startServer()
+    } else if (!serverSession()) {
+        LOG_ERROR("Server session failed.");
+        fprintf(stderr, "Server session failed.\n");
     }
 
 cleanup:
     closeLogger();
     freeServer();
+
     return 0;
 }
