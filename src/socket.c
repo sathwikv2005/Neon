@@ -49,3 +49,7 @@ void closeSocket(Socket socketFd) {
     close(socketFd);
 #endif
 }
+
+int recvSocket(Socket socketFd, char* buffer, int length) {
+    return recv(socketFd, buffer, length, 0);
+}
