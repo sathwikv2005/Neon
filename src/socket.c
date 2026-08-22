@@ -53,3 +53,7 @@ void closeSocket(Socket socketFd) {
 int recvSocket(Socket socketFd, char* buffer, int length) {
     return recv(socketFd, buffer, length, 0);
 }
+
+int sendSocket(Socket socketFd, const char* buffer, int length) {
+    return send(socketFd, buffer, length, 0);
+}
