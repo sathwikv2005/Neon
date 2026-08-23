@@ -39,10 +39,17 @@ static void vlog(LogLevel level, const char* file, int line, const char* fmt,
     localtime_r(&now, &tm);
 #endif
 
+#ifdef NEON_DEBUG
     offset += snprintf(buffer + offset, sizeof(buffer) - offset,
                        "[%04d-%02d-%02d %02d:%02d:%02d] %-5s %s:%d: ",
                        tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour,
                        tm.tm_min, tm.tm_sec, levelNames[level], file, line);
+#else
+    offset += snprintf(buffer + offset, sizeof(buffer) - offset,
+                       "[%04d-%02d-%02d %02d:%02d:%02d] %-5s ",
+                       tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour,
+                       tm.tm_min, tm.tm_sec, levelNames[level]);
+#endif
 
     offset += vsnprintf(buffer + offset, sizeof(buffer) - offset, fmt, args);
 
