@@ -1,4 +1,4 @@
-#include "compiler_common.h"
+#include "repl_common.h"
 
 #define IS_COMMAND(type) \
     ((type) > TOKEN_COMMANDS_START && (type) < TOKEN_COMMANDS_END)

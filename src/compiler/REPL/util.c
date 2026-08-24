@@ -1,7 +1,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "compiler_common.h"
+#include "repl_common.h"
 
 static void verrorAt(Compiler* compiler, Token* token, const char* fmt,
                      va_list args) {

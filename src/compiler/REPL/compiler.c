@@ -1,5 +1,5 @@
-#include "compiler_common.h"
 #include "debug.h"
+#include "repl_common.h"
 #include "stdlib.h"
 
 Chunk* currentChunk(Compiler* compiler) { return compiler->chunk; }

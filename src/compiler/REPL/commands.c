@@ -1,4 +1,4 @@
-#include "compiler_common.h"
+#include "repl_common.h"
 
 #define IS_CONSTANT()                         \
     (check(compiler->parser, TOKEN_STRING) || \
