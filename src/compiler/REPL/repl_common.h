@@ -21,3 +21,8 @@ void emitByte(Compiler* compiler, uint8_t byte);
 void emitBytes(Compiler* compiler, uint8_t byte1, uint8_t byte2);
 int emitPlaceHolderByte(Compiler* compiler);
 void patchByte(Compiler* compiler, int offset, uint8_t newByte);
+
+// commands
+typedef void (*CommandFn)(Compiler*);
+extern CommandFn commandTable[];
+extern const size_t commandTableSize;

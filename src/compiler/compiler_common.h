@@ -7,9 +7,4 @@
 #include "scanner.h"
 #include "value.h"
 
-// commands
-typedef void (*CommandFn)(Compiler*);
-extern CommandFn commandTable[];
-extern const size_t commandTableSize;
-
 #endif
