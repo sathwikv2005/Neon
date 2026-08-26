@@ -1,7 +1,7 @@
 #ifndef neon_parser_h
 #define neon_parser_h
 
-#include "scanner.h"
+#include "repl_scanner.h"
 
 typedef struct {
     Token current;

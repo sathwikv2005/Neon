@@ -4,7 +4,7 @@
 #include "compiler.h"
 #include "object.h"
 #include "parser.h"
-#include "scanner.h"
+#include "repl_scanner.h"
 #include "value.h"
 
 #endif

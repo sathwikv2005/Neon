@@ -1,4 +1,4 @@
-#include "scanner.h"
+#include "repl_scanner.h"
 
 #include <stdio.h>
 #include <string.h>
