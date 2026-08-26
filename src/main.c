@@ -50,7 +50,7 @@ static void repl(uint8_t databaseId) {
     }
     char line[1024];
 
-    Engine* engine = createEngine(CLIENT_REPL, databaseId);
+    Engine* engine = createEngine(CLIENT_REPL, 0, databaseId);
     if (engine == NULL) {
         printf(
             "Failed to start a repl session. Please check the log file for "
@@ -86,7 +86,7 @@ static void repl(uint8_t databaseId) {
 }
 
 static bool respClientSession(Socket client) {
-    Engine* engine = createEngine(CLIENT_RESP, 0);
+    Engine* engine = createEngine(CLIENT_RESP, client, 0);
 
     if (engine == NULL) {
         LOG_ERROR("Failed to create client engine.");
@@ -96,7 +96,7 @@ static bool respClientSession(Socket client) {
     bool success = true;
 
     while (!shouldExit) {
-        char buffer[CLIENT_BUFFER_SIZE];
+        char buffer[CLIENT_BUFFER_SIZE + 1];
 
         int received = recvSocket(client, buffer, sizeof(buffer));
 
@@ -187,6 +187,7 @@ static bool serverSession(void) {
 
     return true;
 }
+
 static void usage(const char* program) {
     printf("Usage:\n");
     printf("  %s                 Start server\n", program);

@@ -3,12 +3,12 @@
 #include "../include/memory.h"
 #include "logger.h"
 
-Engine* createEngine(ClientType type, uint8_t id) {
+Engine* createEngine(ClientType type, Socket socket, uint8_t id) {
     Engine* engine = malloc(sizeof(Engine));
     if (engine == NULL) return NULL;
 
     initvm(&engine->vm);
-    initClient(&engine->client, type);
+    initClient(&engine->client, type, socket);
 
     Database* database = loadDatabase(id);
     if (database == NULL) {
