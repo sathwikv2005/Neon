@@ -19,6 +19,26 @@ static bool isNumber(const RespValue* value) {
     return value->type == RESP_INTEGER;
 }
 
+static bool parseNumber(const RespValue* value, double* number) {
+    if (!isString(value)) return false;
+
+    char buffer[64];
+
+    if (value->string.length >= sizeof(buffer)) {
+        return false;
+    }
+
+    memcpy(buffer, value->string.data, value->string.length);
+    buffer[value->string.length] = '\0';
+
+    char* end;
+    errno = 0;
+
+    *number = strtod(buffer, &end);
+
+    return end != buffer && *end == '\0' && errno != ERANGE;
+}
+
 bool commandEquals(const RespValue* value, const char* command) {
     if (!isString(value)) return false;
 
@@ -55,6 +75,50 @@ static bool emitStringArgument(Compiler* compiler, const RespValue* value,
     if (!isString(value)) {
         compilerError(compiler, errorMessage);
         return false;
+    }
+
+    uint8_t constant = makeStringConstant(compiler, value);
+    emitByte(compiler, constant);
+
+    return true;
+}
+
+/*
+ * Validate that an argument is a string and emit it as the correct value type.
+ */
+static bool emitValueArgument(Compiler* compiler, const RespValue* value,
+                              const char* errorMessage) {
+    if (!isString(value)) {
+        compilerError(compiler, errorMessage);
+        return false;
+    }
+
+    char buffer[64];
+
+    if (value->string.length < sizeof(buffer)) {
+        memcpy(buffer, value->string.data, value->string.length);
+        buffer[value->string.length] = '\0';
+
+        char* end;
+        errno = 0;
+
+        double number = strtod(buffer, &end);
+
+        /*
+         * Numeric only if the entire argument was consumed.
+         *
+         * "123"   -> number
+         * "12.5"  -> number
+         * "-10"   -> number
+         * "123a"  -> string
+         * "abc"   -> string
+         */
+        if (end != buffer && *end == '\0' && errno != ERANGE) {
+            uint8_t constant = makeConstant(compiler, NUMBER_VAL(number));
+
+            emitByte(compiler, constant);
+            return true;
+        }
     }
 
     uint8_t constant = makeStringConstant(compiler, value);
@@ -105,8 +169,8 @@ static bool compileSet(Compiler* compiler, const RespValue* request) {
         return false;
     }
 
-    if (!emitStringArgument(compiler, value,
-                            "invalid value for 'set' command")) {
+    if (!emitValueArgument(compiler, value,
+                           "invalid value for 'set' command")) {
         return false;
     }
 
@@ -245,18 +309,16 @@ static bool compileSelect(Compiler* compiler, const RespValue* request) {
 
     const RespValue* database = &request->array.values[1];
 
-    if (!isNumber(database)) {
+    double id;
+
+    if (!parseNumber(database, &id)) {
         compilerError(compiler, "invalid database id for 'select' command");
         return false;
     }
 
     emitByte(compiler, OP_SELECT);
 
-    /*
-     * If your VM expects SELECT's database id as a constant,
-     * create an integer Value here.
-     */
-    uint8_t constant = makeConstant(compiler, NUMBER_VAL(database->integer));
+    uint8_t constant = makeConstant(compiler, NUMBER_VAL(id));
 
     emitByte(compiler, constant);
 
