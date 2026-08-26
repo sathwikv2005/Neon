@@ -7,6 +7,7 @@
 
 #define NAN_BOXING
 #define UINT8_COUNT (UINT8_MAX + 1)
+#define CLIENT_BUFFER_SIZE 4096
 
 #define NEON_VERSION_STRING "0.1.0"
 

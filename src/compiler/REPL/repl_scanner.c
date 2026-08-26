@@ -1,4 +1,4 @@
-#include "scanner.h"
+#include "repl_scanner.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -33,7 +33,7 @@ static Token errorToken(const char* message) {
     return token;
 }
 
-static Token makeToken(TokenType type) {
+static Token makeToken(NeonTokenType type) {
     Token token;
     token.type = type;
     token.start = scanner.start;
@@ -123,8 +123,8 @@ static Token string(char quote) {
     return token;
 }
 
-static TokenType checkKeyword(int start, int length, const char* rest,
-                              TokenType type) {
+static NeonTokenType checkKeyword(int start, int length, const char* rest,
+                                  NeonTokenType type) {
     if (scanner.current - scanner.start == start + length &&
         memcmp(scanner.start + start, rest, length) == 0) {
         return type;
@@ -133,7 +133,7 @@ static TokenType checkKeyword(int start, int length, const char* rest,
     return TOKEN_STRING;
 }
 
-static TokenType wordType() {
+static NeonTokenType wordType() {
     switch (scanner.start[0]) {
         case 'D':
             if (scanner.current - scanner.start > 1) {
@@ -208,7 +208,7 @@ static TokenType wordType() {
             break;
 
         case 'T':
-            return checkKeyword(1, 3, "YPE", TOKEN_TYPE);
+            return checkKeyword(1, 3, "YPE", TOKEN_TYPEOF);
     }
 
     return TOKEN_STRING;

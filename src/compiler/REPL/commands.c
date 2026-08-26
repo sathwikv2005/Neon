@@ -1,4 +1,4 @@
-#include "compiler_common.h"
+#include "repl_common.h"
 
 #define IS_CONSTANT()                         \
     (check(compiler->parser, TOKEN_STRING) || \
@@ -82,7 +82,7 @@ CommandFn commandTable[] = {
     [TOKEN_EXIT] = exitCommand,     [TOKEN_PING] = pingCommand,
     [TOKEN_QUIT] = quitCommand,     [TOKEN_DBSIZE] = DBSizeCommand,
     [TOKEN_FLUSH] = flushDBCommand, [TOKEN_SAVE] = saveCommand,
-    [TOKEN_SELECT] = selectCommand, [TOKEN_TYPE] = typeCommand,
+    [TOKEN_SELECT] = selectCommand, [TOKEN_TYPEOF] = typeCommand,
     [TOKEN_EXISTS] = existsCommand, [TOKEN_RENAME] = renameCommand,
     [TOKEN_ECHO] = echoCommand,     [TOKEN_INCR] = incrCommand,
     [TOKEN_DECR] = decrCommand,

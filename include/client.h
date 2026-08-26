@@ -17,7 +17,7 @@ typedef struct Client {
     Socket socket;
 } Client;
 
-void initClient(Client* client, ClientType type);
+void initClient(Client* client, ClientType type, Socket socket);
 void freeClient(Client* client);
 
 bool respond(Engine* engine, InterpretOutput result);

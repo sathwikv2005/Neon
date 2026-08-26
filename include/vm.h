@@ -4,6 +4,7 @@
 #include <setjmp.h>
 
 #include "chunk.h"
+#include "client.h"
 #include "common.h"
 #include "object.h"
 #include "server.h"
@@ -95,6 +96,6 @@ void initvm(VM* vm);
 void freevm(VM* vm);
 void setError(VM* vm, const char* fmt, ...);
 
-InterpretOutput interpret(const char* source, VM* vm);
+InterpretOutput interpret(const char* source, VM* vm, ClientType clientType);
 
 #endif

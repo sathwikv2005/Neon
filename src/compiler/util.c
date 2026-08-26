@@ -3,6 +3,8 @@
 
 #include "compiler_common.h"
 
+Chunk* currentChunk(Compiler* compiler) { return compiler->chunk; }
+
 static void verrorAt(Compiler* compiler, Token* token, const char* fmt,
                      va_list args) {
     if (compiler->parser->panicMode) return;

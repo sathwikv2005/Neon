@@ -50,7 +50,7 @@ static void repl(uint8_t databaseId) {
     }
     char line[1024];
 
-    Engine* engine = createEngine(CLIENT_REPL, databaseId);
+    Engine* engine = createEngine(CLIENT_REPL, 0, databaseId);
     if (engine == NULL) {
         printf(
             "Failed to start a repl session. Please check the log file for "
@@ -85,7 +85,48 @@ static void repl(uint8_t databaseId) {
     freeEngine(engine);
 }
 
-static bool serverSession() {
+static bool respClientSession(Socket client) {
+    Engine* engine = createEngine(CLIENT_RESP, client, 0);
+
+    if (engine == NULL) {
+        LOG_ERROR("Failed to create client engine.");
+        return false;
+    }
+
+    bool success = true;
+
+    while (!shouldExit) {
+        char buffer[CLIENT_BUFFER_SIZE + 1];
+
+        int received = recvSocket(client, buffer, sizeof(buffer));
+
+        if (received <= 0) {
+            if (received < 0) {
+                LOG_ERROR("Failed to receive client request.");
+                success = false;
+            }
+
+            break;
+        }
+
+        buffer[received] = '\0';
+
+        InterpretOutput output = execute(engine, buffer);
+
+        if (!respond(engine, output)) {
+            LOG_ERROR("Failed to send response to client.");
+            success = false;
+            break;
+        }
+    }
+
+    freeEngine(engine);
+    return success;
+}
+
+static bool serverSession(void) {
+    const uint16_t port = 6379;
+
     LOG_INFO("Creating server socket.");
 
     Socket server = createSocket();
@@ -97,13 +138,13 @@ static bool serverSession() {
 
     LOG_DEBUG("Server socket created.");
 
-    if (!bindSocket(server, 6379)) {
-        LOG_ERROR("Failed to bind server socket to port %d.", 6379);
+    if (!bindSocket(server, port)) {
+        LOG_ERROR("Failed to bind server socket to port %u.", port);
         closeSocket(server);
         return false;
     }
 
-    LOG_INFO("Server socket bound to port %d.", 6379);
+    LOG_INFO("Server socket bound to port %u.", port);
 
     if (!listenSocket(server)) {
         LOG_ERROR("Failed to listen on server socket.");
@@ -111,7 +152,7 @@ static bool serverSession() {
         return false;
     }
 
-    LOG_INFO("Server listening on port %d.", 6379);
+    LOG_INFO("Server listening on port %u.", port);
 
     printBanner();
 
@@ -126,13 +167,18 @@ static bool serverSession() {
             }
 
             LOG_ERROR("Failed to accept client connection.");
-            closeSocket(server);
-            return false;
+            continue;
         }
 
         LOG_INFO("Client connection accepted.");
 
+        if (!respClientSession(client)) {
+            LOG_DEBUG("Client session ended with an error.");
+        }
+
         closeSocket(client);
+
+        LOG_DEBUG("Client connection closed.");
     }
 
     LOG_INFO("Stopping server.");

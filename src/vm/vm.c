@@ -253,7 +253,7 @@ static InterpretOutput run(VM* vm) {
     return ERROR_STATUS(INTERPRET_RUNTIME_ERROR);
 }
 
-InterpretOutput interpret(const char* source, VM* vm) {
+InterpretOutput interpret(const char* source, VM* vm, ClientType clientType) {
     switch (setjmp(vm->vmJmp)) {
         case JUMP_RUNTIME_ERROR:
             return ERROR_STATUS(INTERPRET_RUNTIME_ERROR);
@@ -262,8 +262,18 @@ InterpretOutput interpret(const char* source, VM* vm) {
     }
     Chunk chunk;
     initChunk(&chunk);
-    if (!compile(vm, source, &chunk)) {
-        return ERROR_STATUS(INTERPRET_COMPILE_ERROR);
+    switch (clientType) {
+        case CLIENT_REPL:
+            if (!compile(vm, source, &chunk)) {
+                return ERROR_STATUS(INTERPRET_COMPILE_ERROR);
+            }
+            break;
+        case CLIENT_RESP:
+            if (!resp_compile(vm, source, &chunk)) {
+                return ERROR_STATUS(INTERPRET_COMPILE_ERROR);
+            }
+        default:
+            break;
     }
 
     vm->chunk = &chunk;

@@ -1,8 +1,6 @@
-#include "compiler_common.h"
 #include "debug.h"
+#include "repl_common.h"
 #include "stdlib.h"
-
-Chunk* currentChunk(Compiler* compiler) { return compiler->chunk; }
 
 void parseKey(Compiler* compiler, const char* message) {
     consume(compiler, TOKEN_STRING, message);
@@ -40,7 +38,7 @@ void parseValue(Compiler* compiler, const char* message) {
 static void command(Compiler* compiler) {
     advance(compiler);
 
-    TokenType type = compiler->parser->previous.type;
+    NeonTokenType type = compiler->parser->previous.type;
 
     if (type < commandTableSize && commandTable[type]) {
         commandTable[type](compiler);

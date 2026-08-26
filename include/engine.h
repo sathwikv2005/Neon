@@ -11,7 +11,7 @@ typedef struct Engine {
     Client client;
 } Engine;
 
-Engine* createEngine(ClientType type, uint8_t id);
+Engine* createEngine(ClientType type, Socket socket, uint8_t id);
 void freeEngine(Engine* engine);
 
 InterpretOutput execute(Engine* engine, const char* line);

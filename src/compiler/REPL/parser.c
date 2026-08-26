@@ -1,4 +1,4 @@
-#include "compiler_common.h"
+#include "repl_common.h"
 
 #define IS_COMMAND(type) \
     ((type) > TOKEN_COMMANDS_START && (type) < TOKEN_COMMANDS_END)
@@ -34,7 +34,7 @@ void advance(Compiler* compiler) {
     }
 }
 
-void consume(Compiler* compiler, TokenType type, const char* message) {
+void consume(Compiler* compiler, NeonTokenType type, const char* message) {
     if (compiler->parser->current.type == type) {
         advance(compiler);
         return;
@@ -42,11 +42,11 @@ void consume(Compiler* compiler, TokenType type, const char* message) {
     errorAtCurrent(compiler, message);
 }
 
-bool check(Parser* parser, TokenType type) {
+bool check(Parser* parser, NeonTokenType type) {
     return parser->current.type == type;
 }
 
-bool match(Compiler* compiler, TokenType type) {
+bool match(Compiler* compiler, NeonTokenType type) {
     if (!check(compiler->parser, type)) return false;
     advance(compiler);
     return true;
