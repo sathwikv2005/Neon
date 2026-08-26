@@ -11,8 +11,12 @@ typedef struct {
     VM* vm;
 } Compiler;
 
+// REPL
 extern Chunk* chunk;
 bool compile(VM* vm, const char* source, Chunk* chunk);
 void markCompilerRoots();
+
+// RESP
+bool resp_compile(VM* vm, const char* source, Chunk* chunk);
 
 #endif

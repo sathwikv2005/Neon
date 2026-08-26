@@ -35,5 +35,5 @@ void freeEngine(Engine* engine) {
 }
 
 InterpretOutput execute(Engine* engine, const char* line) {
-    return interpret(line, &engine->vm);
+    return interpret(line, &engine->vm, engine->client.type);
 }
