@@ -51,6 +51,11 @@ RespParseResult parseResp(const char* data, size_t length, RespValue* value);
 void freeRespValue(RespValue* value);
 
 // commands
+typedef bool (*CommandFn)(Compiler* compiler, const RespValue* request);
+typedef struct {
+    const char* name;
+    CommandFn function;
+} CommandEntry;
 bool compileCommand(Compiler* compiler, const RespValue* request);
 
 #endif
