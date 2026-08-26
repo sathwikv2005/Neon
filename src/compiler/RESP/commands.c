@@ -39,15 +39,16 @@ bool compileGet(Compiler* compiler, const RespValue* request) {
         return false;
     }
 
-    if (!isString(&request->array.values[1])) {
+    const RespValue* key = &request->array.values[1];
+
+    if (!isString(key)) {
         compilerError(compiler, "invalid argument for 'get' command");
         return false;
     }
 
-    ObjString* key = copyString(compiler->parser->previous.start,
-                                compiler->parser->previous.length);
+    ObjString* object = copyString(key->string.data, key->string.length);
 
-    uint8_t constant = makeConstant(compiler, OBJ_VAL(key));
+    uint8_t constant = makeConstant(compiler, OBJ_VAL(object));
 
     emitBytes(compiler, OP_GET, constant);
 
