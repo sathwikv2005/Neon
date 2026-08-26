@@ -3,9 +3,9 @@
 // parser
 void synchronize(Compiler* compiler);
 void advance(Compiler* compiler);
-void consume(Compiler* compiler, TokenType type, const char* message);
-bool check(Parser* parser, TokenType type);
-bool match(Compiler* compiler, TokenType type);
+void consume(Compiler* compiler, NeonTokenType type, const char* message);
+bool check(Parser* parser, NeonTokenType type);
+bool match(Compiler* compiler, NeonTokenType type);
 
 // compiler
 void parseKey(Compiler* compiler, const char* message);

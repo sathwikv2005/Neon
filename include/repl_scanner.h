@@ -3,7 +3,7 @@
 
 #include "common.h"
 
-typedef enum {
+typedef enum NeonTokenType {
     TOKEN_COMMANDS_START,
 
     // Connection
@@ -25,7 +25,7 @@ typedef enum {
     // Key management
     TOKEN_RENAME,
     TOKEN_EXISTS,
-    TOKEN_TYPE,
+    TOKEN_TYPEOF,
 
     // DB management
     TOKEN_SELECT,
@@ -46,10 +46,10 @@ typedef enum {
     TOKEN_EOF,
     TOKEN_ERROR
 
-} TokenType;
+} NeonTokenType;
 
 typedef struct {
-    TokenType type;
+    NeonTokenType type;
     const char* start;
     int length;
     int line;

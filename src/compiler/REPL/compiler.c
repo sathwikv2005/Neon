@@ -38,7 +38,7 @@ void parseValue(Compiler* compiler, const char* message) {
 static void command(Compiler* compiler) {
     advance(compiler);
 
-    TokenType type = compiler->parser->previous.type;
+    NeonTokenType type = compiler->parser->previous.type;
 
     if (type < commandTableSize && commandTable[type]) {
         commandTable[type](compiler);

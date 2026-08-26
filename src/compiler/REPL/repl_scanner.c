@@ -33,7 +33,7 @@ static Token errorToken(const char* message) {
     return token;
 }
 
-static Token makeToken(TokenType type) {
+static Token makeToken(NeonTokenType type) {
     Token token;
     token.type = type;
     token.start = scanner.start;
