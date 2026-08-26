@@ -2,8 +2,6 @@
 #include "repl_common.h"
 #include "stdlib.h"
 
-Chunk* currentChunk(Compiler* compiler) { return compiler->chunk; }
-
 void parseKey(Compiler* compiler, const char* message) {
     consume(compiler, TOKEN_STRING, message);
     ObjString* key = copyString(compiler->parser->previous.start,

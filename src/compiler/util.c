@@ -1,7 +1,9 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "repl_common.h"
+#include "compiler_common.h"
+
+Chunk* currentChunk(Compiler* compiler) { return compiler->chunk; }
 
 static void verrorAt(Compiler* compiler, Token* token, const char* fmt,
                      va_list args) {
