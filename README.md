@@ -8,29 +8,36 @@ It speaks the Redis protocol, so existing Redis clients can connect to Neon with
 
 ## Quick Start
 
-Start Neon REPL session:
+Start Neon server:
 
 ```bash
-neon --repl
+cd path/to/neon
+./neon.exe
 ```
 
-Then use the built-in CLI:
+Then use the redis-cli:
 
 ```text
-127.0.0.1:6379> SET name "Neon"
+$ redis-cli -h 127.0.0.1 -p 6379
+```
+
+Examples:
+
+```text
+127.0.0.1:6379> SET name Neon
 OK
 
 127.0.0.1:6379> GET name
 "Neon"
 
 127.0.0.1:6379> INCR visits
-1
+(integer) 1
 
 127.0.0.1:6379> INCR visits
-2
+(integer) 2
 
 127.0.0.1:6379> DBSIZE
-2
+(integer) 2
 ```
 
 Neon supports multiple databases and persistent snapshots:
@@ -39,10 +46,10 @@ Neon supports multiple databases and persistent snapshots:
 127.0.0.1:6379> SELECT 2
 OK
 
-127.0.0.1:6379> SET language "C"
+127.0.0.1:6379[2]> SET language "C"
 OK
 
-127.0.0.1:6379> SAVE
+127.0.0.1:6379[2]> SAVE
 OK
 ```
 
@@ -71,10 +78,10 @@ OK
 OK
 
 > INCR counter
-42
+(integer) 42
 
 > EXISTS user:1001 counter
-2
+(integer) 2
 
 > RENAME user:1001 current_user
 OK
@@ -139,11 +146,5 @@ cd neon
 Then start the server:
 
 ```bash
-neon
+neon.exe
 ```
-
-## Status
-
-Neon is actively developed.
-
-The core database, VM execution model, Redis-compatible command interface, multiple databases, and snapshot persistence are currently implemented. The project is still evolving, and the protocol and internal APIs may change as the design matures.
