@@ -13,7 +13,7 @@ typedef struct {
 
 extern Server server;
 
-void initServer();
+bool initServer();
 void freeServer();
 
 #endif

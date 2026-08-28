@@ -5,12 +5,13 @@
 
 Server server;
 
-void initServer() {
+bool initServer() {
     initTable(&server.strings);
     if (!initSockets()) {
         LOG_FATAL("Failed to initialize sockets.");
-        return;
+        return false;
     }
+    return true;
 }
 
 void freeServer() {

@@ -205,8 +205,10 @@ int main(int argc, const char* argv[]) {
         return 1;
     }
 
-    // TODO: log and exit if initServer() fails.
-    initServer();
+    if (!initServer()) {
+        fprintf(stderr, "Failed to initialize. Please check logs.\n");
+        LOG_ERROR("Failed to initialize server");
+    }
 
     bool startRepl = false;
     uint8_t databaseId = 0;
