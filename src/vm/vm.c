@@ -15,7 +15,7 @@
 #define INTERPRET_RESULT(v) ((InterpretOutput){INTERPRET_OK, true, (v)})
 
 // report an error back to the engine
-#define ERROR_STATUS(s) ((InterpretOutput){(s), false, NULL_VAL})
+#define INTERPRET_ERROR(s) ((InterpretOutput){(s), false, NULL_VAL})
 
 void initvm(VM* vm) {
     resetStack(vm);
@@ -97,7 +97,7 @@ static InterpretOutput run(VM* vm) {
                 ObjString* key = READ_STRING();
                 if (!tableDelete(&vm->database->table, key)) {
                     RUNTIME_ERROR("Failed to delete %s", key->chars);
-                    return ERROR_STATUS(INTERPRET_RUNTIME_ERROR);
+                    return INTERPRET_ERROR(INTERPRET_RUNTIME_ERROR);
                 }
                 return INTERPRET_OK();
             }
@@ -250,27 +250,27 @@ static InterpretOutput run(VM* vm) {
                 break;
         }
     }
-    return ERROR_STATUS(INTERPRET_RUNTIME_ERROR);
+    return INTERPRET_ERROR(INTERPRET_RUNTIME_ERROR);
 }
 
 InterpretOutput interpret(const char* source, VM* vm, ClientType clientType) {
     switch (setjmp(vm->vmJmp)) {
         case JUMP_RUNTIME_ERROR:
-            return ERROR_STATUS(INTERPRET_RUNTIME_ERROR);
+            return INTERPRET_ERROR(INTERPRET_RUNTIME_ERROR);
         case JUMP_EXIT:
-            return ERROR_STATUS(INTERPRET_EXIT);
+            return INTERPRET_ERROR(INTERPRET_EXIT);
     }
     Chunk chunk;
     initChunk(&chunk);
     switch (clientType) {
         case CLIENT_REPL:
             if (!compile(vm, source, &chunk)) {
-                return ERROR_STATUS(INTERPRET_COMPILE_ERROR);
+                return INTERPRET_ERROR(INTERPRET_COMPILE_ERROR);
             }
             break;
         case CLIENT_RESP:
             if (!resp_compile(vm, source, &chunk)) {
-                return ERROR_STATUS(INTERPRET_COMPILE_ERROR);
+                return INTERPRET_ERROR(INTERPRET_COMPILE_ERROR);
             }
         default:
             break;
