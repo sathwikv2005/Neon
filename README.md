@@ -10,7 +10,7 @@ It speaks the Redis protocol, so existing Redis clients can connect to Neon with
 
 Start Neon server:
 
-```bash
+```bashv
 cd path/to/neon
 ./neon.exe
 ```
@@ -91,6 +91,11 @@ number
 
 > KEYS
 ["counter", "current_user"]
+
+> SAVE
+OK
+
+>EXIT
 ```
 
 The interface stays simple while the implementation underneath remains intentionally close to the metal.
